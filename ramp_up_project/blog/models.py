@@ -12,32 +12,32 @@ class Profile(models.Model):
     profile_img = models.ImageField(upload_to='profile_images', default='blank-profile-picture.png')
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='post_images', default=None)
+    image = models.ImageField(upload_to='post_images', blank=True)
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)
     no_of_likes = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.user
+        return str(self.id)
 
 class LikePost(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 class FollowersCount(models.Model):
     follower = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 class Comment(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -46,7 +46,7 @@ class Comment(models.Model):
     comment_date = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
-        return self.user
+        return str(self.id)
 
 class Category(models.Model):
     category_name = models.CharField(max_length=100)
@@ -59,4 +59,4 @@ class CategoryPost(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.category_id
+        return self.category_id.category_name
