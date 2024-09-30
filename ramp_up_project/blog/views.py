@@ -19,18 +19,18 @@ class PostCreationView(CreateView):
     form_class = UserCreationForm
     template_name = "Post/create_post.html"
 
-@login_required
-def create_post_view(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user  # Koppel de post aan de ingelogde gebruiker
-            post.save()
-            return redirect('profile', user_id=request.user.id)  # Redirect naar de profielpagina
-    else:
-        form = PostForm()
-    return render(request, 'create_post.html', {'form': form})
+    @login_required
+    def create_post_view(request):
+        if request.method == 'POST':
+            form = PostForm(request.POST, request.FILES)
+            if form.is_valid():
+                post = form.save(commit=False)
+                post.user = request.user  # Koppel de post aan de ingelogde gebruiker
+                post.save()
+                return redirect('profile', user_id=request.user.id)  # Redirect naar de profielpagina
+        else:
+            form = PostForm()
+        return render(request, 'create_post.html', {'form': form})
 
 def list_posts_view(request):
     posts = Post.objects.all()  # Haal alle posts op
