@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div>
+        <h1>{{ user.username }}'s Profile</h1>  
+        
+        <h2>Your Posts:</h2>  
+        {% if posts %}  
+            <ul>  
+                {% for post in posts %}  
+                    <li>  
+                        <img src="{{ post.image.url }}" alt="{{ post.caption }}" style="max-width: 200px;">  
+                        <p>{{ post.caption }}</p>  
+                        <p>Likes: {{ post.no_of_likes }}</p>  
+                    </li>  
+                {% endfor %}  
+            </ul>  
+        {% else %}  
+            <p>No posts available.</p>  
+        {% endif %}
+    </div>
+{% endblock %}
