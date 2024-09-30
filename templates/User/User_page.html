@@ -1,0 +1,18 @@
+{% extends '_base.html' %}
+
+{% block content %}
+    <h1>Posts van Gebruiker</h1>
+    <div class="post">
+        <h2>Post Titel 1</h2>
+    </div>
+    <div class="post">
+        <h2>Post Titel 2</h2>
+    </div>
+    <div class="post">
+        <h2>Post Titel 3</h2>
+    </div>
+    
+    {% if error %}
+        <p class="text-red-500 mt-4">{{ error }}</p>
+    {% endif %}
+{% endblock %}
