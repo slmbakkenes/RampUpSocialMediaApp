@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from blog.views import SignUpView, create_post_view
+from blog.views import SignUpView, create_post_view,PostCreationView
 from .views import index
 
 urlpatterns = [
