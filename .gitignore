@@ -139,3 +139,9 @@ GitHub.sublime-settings
 # DB
 *.sqlite3
 ramp_up_project/db.sqlite3
+/.idea/dataSources.xml
+/.idea/material_theme_project_new.xml
+/.idea/misc.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/RampUpSocialMedia.iml
+/.idea/vcs.xml
