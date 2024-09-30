@@ -145,3 +145,4 @@ ramp_up_project/db.sqlite3
 #tailwindcss
 tailwind.config.js
 static/src/output.css
+static/CACHE/*
