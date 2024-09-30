@@ -19,26 +19,10 @@ def create_post_view(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            post = form.save(commit=False)  # Sla het formulier op, maar nog niet in de database
-            post.user = request.user  # Vul de user ForeignKey met de ingelogde gebruiker
-            post.save()  # Sla nu de post op
-            return redirect('home')  # Redirect naar bijvoorbeeld de homepagina
+            post = form.save(commit=False)
+            post.user = request.user  # Koppel de post aan de ingelogde gebruiker
+            post.save()
+            return redirect('profile', user_id=request.user.id)  # Redirect naar de profielpagina
     else:
         form = PostForm()
-
-    return render(request, 'create_post.html', {'form': form})
-
-
-def edit_post_view(request, post_id):
-
-    if request.method == 'PUT':
-        form = PostForm(request.PUT, request.FILES)  # Vul het formulier met de bestaande post
-        if form.is_valid():
-            post = form.save(commit=False)  # Sla het formulier op, maar nog niet in de database
-            post.user = request.user  # Vul de user ForeignKey met de ingelogde gebruiker
-            post.save()  # Sla nu de post op
-            return redirect('home')  # Redirect naar bijvoorbeeld de homepagina
-    else:
-        form = PostForm()  # Vul het formulier met de bestaande post
-
     return render(request, 'create_post.html', {'form': form})
