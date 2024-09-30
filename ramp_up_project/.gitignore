@@ -126,7 +126,7 @@ sftp-config.json
 Control.last-run 
 Control.ca-list 
 Control.ca-bundle 
-Control.system-ca-bundle 
+Control.system-ca-bundle
 GitHub.sublime-settings 
 
 # Visual Studio Code # 
@@ -141,3 +141,8 @@ ramp_up_project/db.sqlite3
 
 # DB
 *.sqlite3
+
+#tailwindcss
+tailwind.config.js
+static/src/output.css
+static/CACHE/*
