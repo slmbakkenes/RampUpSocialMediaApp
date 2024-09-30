@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.template.context_processors import static
 from django.urls import path, include
-from blog.views import SignUpView, create_post_view, PostCreationView
+from blog.views import SignUpView, PostCreationView
 from . import settings
 from .views import index
 
@@ -26,5 +26,6 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("signup/", SignUpView.as_view(), name="signup"),
     path('', PostCreationView.as_view(), name='index'),
-    path('profile/', PostCreationView.as_view(), name='profile') + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('profile/', PostCreationView.as_view(), name='profile')
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ]
