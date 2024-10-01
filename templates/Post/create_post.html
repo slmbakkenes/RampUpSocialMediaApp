@@ -2,27 +2,34 @@
 {% load widget_tweaks %}
 
 {% block content %}
-    <div>
-        <h1>Create a Post</h1>
+<div class="flex items-center justify-center min-h-screen">
+    <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6"> <!-- Added styling for background, shadow, and padding -->
+        <h1 class="text-2xl font-bold text-center mb-5">Create a Post</h1>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" class="mb-4">
             {% csrf_token %}
-            
-            <div>
-                <label for="caption" >Caption:</label>
-                <textarea id="caption" name="caption" rows="4" ></textarea>
+
+            <!-- Caption Field -->
+            <div class="mb-5">
+                <label for="caption" class="block mb-2 text-sm font-medium text-black">Caption:</label> <!-- Label styling -->
+                <textarea id="caption" name="caption" rows="4" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea> <!-- Textarea styling -->
             </div>
-            
-            <div>
-                <label for="image" >Image (optional):</label>
-                <input type="file" id="image" name="image" >
+
+            <!-- Image Upload Field -->
+            <div class="mb-5">
+                <label for="image" class="block mb-2 text-sm font-medium text-black">Image (optional):</label> <!-- Label styling -->
+                <input type="file" id="image" name="image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" /> <!-- Input styling -->
             </div>
-            
-            <button type="submit">Post</button>
+
+            <!-- Submit Button -->
+            <div class="flex justify-center"> <!-- Center the button -->
+                <button type="submit" class="text-black bg-[#60A9B4] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Post</button>
+            </div>
         </form>
 
         {% if error %}
-        <p>{{ error }}</p>
+        <p class="text-red-500 text-center">{{ error }}</p> <!-- Error message styling -->
         {% endif %}
     </div>
+</div>
 {% endblock %}

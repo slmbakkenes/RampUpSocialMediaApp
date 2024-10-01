@@ -14,24 +14,41 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls.static import static
 from django.contrib import admin
-from django.template.context_processors import static
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from blog.views import SignUpView, ForYouPageView
-from . import settings
-from blog.views import SignUpView, PostCreationView
-from . import settings
-from .views import index
+from django.conf import settings
+from django.conf.urls.static import static
+from blog.views import (
+    SignUpView,
+    ForYouPageView,
+    PostCreationView,
+    ListPostsView,
+    PostUpdateView,
+    profile_view,
+)
 
 urlpatterns = [
+    # Admin site
     path('admin/', admin.site.urls),
-    path("accounts/", include("django.contrib.auth.urls")),
-    path("signup/", SignUpView.as_view(), name="signup"),
-    path('', ForYouPageView.as_view(), name='index'),
-    path('foryoupage/', ForYouPageView.as_view(), name='foryoupage'),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    path('', PostCreationView.as_view(), name='index'),
-    path('profile/', PostCreationView.as_view(), name='profile')
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-]
+
+    # Authentication views
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('signup/', SignUpView.as_view(), name='signup'),
+
+    # Main views
+    path('', ForYouPageView.as_view(), name='foryoupage'),  # For You page
+    path('foryoupage/', ForYouPageView.as_view(), name='foryoupage_redirect'),  # Redirect to For You page
+
+    # Post management
+    path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
+    path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
+    path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
+
+    # Profile view
+    path('profile/<str:username>/', profile_view, name='profile'),
+
+    # Default authentication URLs (includes password reset, etc.)
+    path('accounts/', include('django.contrib.auth.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

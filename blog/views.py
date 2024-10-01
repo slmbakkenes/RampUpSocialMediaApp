@@ -1,80 +1,86 @@
-from msilib.schema import ListView
-
 from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
-from blog.models import Post, Comment, Follow
-
-from django.views.generic import CreateView, DetailView
-from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
-
-from blog.models import Post
+from django.contrib.auth.mixins import LoginRequiredMixin
+from blog.models import Post, Comment, Follow, User, Profile
 from forms.post_form import PostForm
 
-# Create your views here.
+# Home view that requires login
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'index.html'
+    login_url = 'login'  # Redirect to login if not authenticated
+
+# Sign-up view for creating a new user
 class SignUpView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
-
-class ForYouPageView(ListView):
-    template_name = "forYouPage.html"
+# View for the "For You" page showing posts from followed users
+class ForYouPageView(LoginRequiredMixin, ListView):
+    template_name = "index.html"
     paginate_by = 15
     model = Post
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        path = self.request.path
+        following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
+        return Post.objects.filter(user__in=following).order_by("-created_at")
 
-        if "/foryoupage/" == path:
-            following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
-            queryset = queryset.filter(user__in=following)
-
-        return queryset.order_by("-created_at")
-
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = Comment.objects.all()
         return context
 
-
-class PostCreationView(CreateView):
-    form_class = UserCreationForm
+# View for creating a new post
+class PostCreationView(LoginRequiredMixin, CreateView):
+    form_class = PostForm
     template_name = "Post/create_post.html"
 
-    @login_required
-    def create_post_view(request):
-        if request.method == 'POST':
-            form = PostForm(request.POST, request.FILES)
-            if form.is_valid():
-                post = form.save(commit=False)
-                post.user = request.user  # Koppel de post aan de ingelogde gebruiker
-                post.save()
-                return redirect('profile', user_id=request.user.id)  # Redirect naar de profielpagina
-        else:
-            form = PostForm()
-        return render(request, 'create_post.html', {'form': form})
+    def form_valid(self, form):
+        form.instance.user = self.request.user  # Associate the post with the logged-in user
+        return super().form_valid(form)
 
-def list_posts_view(request):
-    posts = Post.objects.all()  # Haal alle posts op
-    return render(request, 'list_posts.html', {'posts': posts})
+    def get_success_url(self):
+        # Redirect to the user's profile using the username
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
-def update_post_view(request, post_id):
-    post = get_object_or_404(Post, id=post_id)  # Haal de post op
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES, instance=post)  # Geef het bestaande object door
-        if form.is_valid():
-            form.save()
-            return redirect('profile', user_id=request.user.id)  # Redirect naar de profielpagina
-    else:
-        form = PostForm(instance=post)  # Vul het formulier met de huidige gegevens van de post
-    return render(request, 'update_post.html', {'form': form, 'post': post})
+# View for listing all posts
+class ListPostsView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = 'list_posts.html'
+    paginate_by = 15  # You can adjust this as needed
 
-def delete_post_view(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
-        post.delete()  # Verwijder de post
-        return redirect('profile', user_id=request.user.id)  # Redirect naar de profielpagina
-    return render(request, 'confirm_delete.html', {'post': post})
+# View for updating a post
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'update_post.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+
+# View for deleting a post
+@login_required
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = 'confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+
+    def dispatch(self, request, *args, **kwargs):
+        post = self.get_object()
+        if post.user != request.user:
+            return HttpResponseForbidden()  # Prevent unauthorized deletions
+        return super().dispatch(request, *args, **kwargs)
+
+
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+    posts = Post.objects.filter(user=user)
+
+    return render(request, 'profile/profile.html', {'user': user, 'profile': profile, 'posts': posts})

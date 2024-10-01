@@ -138,3 +138,12 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 COMPRESS_ENABLED = True
 
 STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+
+# Redirect to login page if authentication is required
+LOGIN_URL = 'login'
+
+# Redirect after successful login
+LOGIN_REDIRECT_URL = 'foryoupage'  # or wherever you want to redirect users post-login
+
+# Redirect after logout
+LOGOUT_REDIRECT_URL = 'login'
