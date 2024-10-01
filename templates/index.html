@@ -1,38 +1,99 @@
 {% extends "_base.html" %}
+{% load widget_tweaks %}
+{% load static %}
 
-{% block title %}Home{% endblock %}
+{% block title %}For You Page{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-    {% if user.is_authenticated %}
-        <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Welcome, {{ user.username }}!</h2>
-        <p class="text-gray-700 dark:text-gray-300 mb-4">You are logged in.</p>
-        
-        <!-- Password Change Link -->
-        <p class="mb-4">
-            <a href="{% url 'password_change' %}" class="text-blue-600 hover:underline dark:text-blue-400">Change your password</a>
-        </p>
+    {% for post in page_obj %}
+        <a href="#"
+           class="border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 
-        <!-- Log Out Form -->
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="w-full text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-800">
-                Log Out
-            </button>
-        </form>
-    {% else %}
-        <h2 class="text-xl font-bold mb-4 text-gray-900 dark:text-white">Hello, Guest!</h2>
-        <p class="text-gray-700 dark:text-gray-300 mb-4">You are not logged in.</p>
+            <!-- User Info Section -->
+            <div class="basis-1/4 flex flex-row justify-between items-center mb-4">
+                <div class="flex flex-row items-center">
+                    <img class="w-1/12 h-auto aspect-square rounded-full object-scale-down"
+                         src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"  <!-- Fetching user profile image -->
+                         alt="User Image">
+                    <h4 class="mx-4 text-lg font-semibold text-gray-900 dark:text-white">{{ post.user.username }}</h4>
+                </div>
+                <button class="justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white">
+                    Report
+                </button>
+            </div>
 
-        <!-- Password Reset Link -->
-        <p class="mb-2">
-            <a href="{% url 'password_reset' %}" class="text-blue-600 hover:underline dark:text-blue-400">Forgot your password? Reset it here.</a>
-        </p>
+            <!-- Post Info Section -->
+            <div class="flex md:flex-row flex-col basis-3/4 w-auto flex-grow h-full" id="post info">
+                <!-- Post Image and Title -->
+                <div class="basis-1/2 flex flex-col md:mr-4">
+                    <img class="h-3/4 object-scale-down rounded-lg"
+                         src="{{ post.image.url|default:'/media/post_images/img1.jpg' }}"
+                         alt="Post Image">
+                    <h2 class="h-1/4 py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
+                </div>
 
-        <!-- Log In Link -->
-        <p>
-            <a href="{% url 'login' %}" class="text-blue-600 hover:underline dark:text-blue-400">Log In</a>
-        </p>
+                <!-- Comments Section -->
+                <div class="basis-1/2 h-full flex flex-col md:ml-4 overflow-y-auto object-scale-down md:max-h-full max-h-48"
+                     id="comments">
+                    <div class="h-full text-gray-700 dark:text-gray-400 relative">
+                        <ol class="h-full relative">
+                            {% for comment in comments %}
+                                {% if post.id == comment.post.id %}  <!-- Fixed to use `post.id` -->
+                                    <li class="relative flex flex-row grow content-center items-center pb-10">
+                                        <div class="z-0 absolute top-0 bottom-0 inset-9 w-1 border-s border-gray-200 dark:border-gray-700 text-transparent"></div>
+                                        <div class="aspect-square object-scale-down z-10 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white mx-6 dark:ring-gray-900 dark:bg-blue-900">
+                                            <img class="rounded-full shadow-lg"
+                                                 src="/media/blank-profile-picture.png"
+                                                 alt="Profile picture"/>
+                                        </div>
+                                        <div class="grow items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:bg-gray-700 dark:border-gray-600">
+                                            <time class="mb-1 text-xs font-normal text-gray-400">
+                                                {{ comment.comment_date }}
+                                            </time>
+                                            <div class="text-sm font-normal text-gray-500 dark:text-gray-300">
+                                                {{ comment.comment }}
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+        </a>
+    {% endfor %}
+
+    {% if page_obj.paginator.count > 0 %}
+        <div class="flex flex-col items-center">
+            <span class="text-sm text-gray-700 dark:text-gray-400">
+                Showing <span class="font-semibold text-gray-900">{{ page_obj.start_index }}</span> to <span class="font-semibold text-gray-900">{{ page_obj.end_index }}</span> of <span class="font-semibold text-gray-900">{{ page_obj.paginator.count }}</span> Entries
+            </span>
+            {% if page_obj.paginator.num_pages > 1 %}
+                <div class="inline-flex mt-2">
+                    <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                       href="?page={{ page_obj.previous_page_number }}">
+                        <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg"
+                             fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13 5H1m0 0 4 4M1 5l4-4"></path>
+                        </svg>
+                        Prev
+                    </a>
+                    <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                       href="?page={{ page_obj.next_page_number }}">
+                        Next
+                        <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg"
+                             fill="none" viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M1 5h12m0 0L9 1m4 4L9 9"></path>
+                        </svg>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
     {% endif %}
-</div>
 {% endblock %}

@@ -9,24 +9,126 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet"/>
 
-    <title>Django + Tailwind CSS + Flowbite</title>
+    <title>{% block title %}Social Media App{% endblock %}</title>
 
     {% compress css %}
-    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+        <link rel="stylesheet" href="{% static 'src/output.css' %}">
     {% endcompress %}
 
 </head>
 
-<body class="bg-green-50">
-
-    <div class="container mx-auto mt-4">
-        {% block content %}
-        {% endblock content %}
+<body style="background-color: #60A9B4;">
+<!-- Navbar -->
+<nav class="fixed top-0 z-50 w-full border-b border-gray-200 dark:border-gray-700" style="background-color: #93CDDE;">
+    <div class="px-3 py-3 lg:px-5 lg:pl-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center justify-start rtl:justify-end">
+                <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
+                        type="button"
+                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                    <span class="sr-only">Open sidebar</span>
+                </button>
+                <a href="{% url 'foryoupage' %}" class="flex ms-2 md:me-24">
+                    <img src="/media/logo.png" class="h-8 me-3" alt="Logo"/>
+                    <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Social Media App</span>
+                </a>
+            </div>
+            <div class="flex items-center">
+                <div class="flex items-center ms-3">
+                    {% if user.is_authenticated %}
+                        <div>
+                            <button type="button"
+                                    class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                                    aria-expanded="false" data-dropdown-toggle="dropdown-user">
+                                <span class="sr-only">Open user menu</span>
+                                <img class="w-8 h-8 rounded-full"
+                                     src="/media/{{ user.profile.picture.url|default:'blank-profile-picture.png' }}"
+                                     alt="user photo">
+                            </button>
+                        </div>
+                        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                             id="dropdown-user">
+                            <div class="px-4 py-3" role="none">
+                                <p class="text-sm text-gray-900 dark:text-white" role="none">
+                                    {{ user.username }}
+                                </p>
+                                <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
+                                    {{ user.email }}
+                                </p>
+                            </div>
+                            <ul class="py-1" role="none">
+                                <li>
+                                    <a href="{% url 'profile' user.username %}"
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                       role="menuitem">Account</a>
+                                </li>
+                                <li>
+                                    <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                                        {% csrf_token %}
+                                    </form>
+                                    <button type="button" 
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            onclick="document.getElementById('logout-form').submit();">
+                                        Sign out
+                                    </button>
+                                </li>   
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}"
+                           class="text-sm font-medium text-gray-900 dark:text-white hover:underline">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
+</nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+<!-- Sidebar -->
+<aside id="logo-sidebar"
+       class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full border-r border-gray-200 sm:translate-x-0 dark:border-gray-700"
+       style="background-color: #93CDDE;" aria-label="Sidebar">
+    <div class="h-full px-3 pb-4 overflow-y-auto">
+        <ul class="space-y-2 font-medium">
+            <li>
+                <a href="{% url 'foryoupage' %}"
+                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <span class="ms-3">Home</span>
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+                <li>
+                    <a href="{% url 'profile' user.username %}"
+                       class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="flex-1 ms-3 whitespace-nowrap">Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'create_post' %}"
+                       class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="flex-1 ms-3 whitespace-nowrap">Add Post</span>
+                    </a>
+                </li>
+            {% else %}
+                <li>
+                    <a href="{% url 'login' %}"
+                       class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="flex-1 ms-3 whitespace-nowrap">Login</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</aside>
+
+<!-- Main Content Area -->
+<div class="p-4 sm:ml-64">
+    {% block content %}
+    {% endblock content %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
 </body>
-
 </html>

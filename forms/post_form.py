@@ -4,4 +4,21 @@ from blog.models import Post
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['image', 'caption']  # We laten 'user' weg omdat deze automatisch wordt ingesteld.
+        fields = ['image', 'caption']  # We leave 'user' out because it's set automatically.
+        widgets = {
+            'caption': forms.Textarea(attrs={
+                'placeholder': 'Write your caption here...',
+                'rows': 4,
+                'class': 'form-control'  # Adding Bootstrap class for styling (if applicable)
+            }),
+        }
+        labels = {
+            'image': 'Post Image',
+            'caption': 'Caption',
+        }
+
+    def clean_caption(self):
+        caption = self.cleaned_data.get('caption')
+        if len(caption) > 500:  # Example validation: maximum caption length
+            raise forms.ValidationError("Caption cannot exceed 500 characters.")
+        return caption

@@ -5,7 +5,6 @@ from datetime import datetime
 
 User = get_user_model()
 
-# Create your models here
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
@@ -26,24 +25,24 @@ class Post(models.Model):
         return str(self.id)
 
 class LikePost(models.Model):
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username
 
 class FollowersCount(models.Model):
-    follower = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')  # Changed to ForeignKey
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_users')
 
     def __str__(self):
         return self.user.username
 
 class Comment(models.Model):
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)  # Changed from post_id to post
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
-    comment_date = models.DateTimeField(default=datetime.now)
+    comment_date = models.DateTimeField(auto_now_add=True)  # Automatically set date
 
     def __str__(self):
         return str(self.id)
@@ -55,8 +54,15 @@ class Category(models.Model):
         return self.category_name
 
 class CategoryPost(models.Model):
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)  # Changed from category_id to category
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)  # Changed from post_id to post
 
     def __str__(self):
-        return self.category_id.category_name
+        return self.category.category_name
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+
+    def __str__(self):
+        return self.follower.username
