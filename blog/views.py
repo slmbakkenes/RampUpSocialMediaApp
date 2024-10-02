@@ -26,8 +26,14 @@ class ForYouPageView(LoginRequiredMixin, ListView):
     model = Post
 
     def get_queryset(self):
-        following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
-        return Post.objects.filter(user__in=following).order_by("-created_at")
+        queryset = super().get_queryset()
+        path = self.request.path
+
+        if "/foryoupage/" == path:
+            following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
+            queryset = queryset.filter(user__in=following)
+
+        return queryset.order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

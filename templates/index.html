@@ -13,7 +13,7 @@
             <div class="basis-1/4 flex flex-row justify-between items-center mb-4">
                 <div class="flex flex-row items-center">
                     <img class="w-1/12 h-auto aspect-square rounded-full object-scale-down"
-                         src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"  <!-- Fetching user profile image -->
+                         src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
                          alt="User Image">
                     <h4 class="mx-4 text-lg font-semibold text-gray-900 dark:text-white">{{ post.user.username }}</h4>
                 </div>
@@ -27,7 +27,11 @@
                 <!-- Post Image and Title -->
                 <div class="basis-1/2 flex flex-col md:mr-4">
                     <img class="h-3/4 object-scale-down rounded-lg"
-                         src="{{ post.image.url|default:'/media/post_images/img1.jpg' }}"
+                            {% if post.image %}
+                         src="{{ post.image.url }}"
+                            {% else %}
+                         src="/media/post_images/img1.jpg"
+                            {% endif %}
                          alt="Post Image">
                     <h2 class="h-1/4 py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
                 </div>
@@ -68,7 +72,9 @@
     {% if page_obj.paginator.count > 0 %}
         <div class="flex flex-col items-center">
             <span class="text-sm text-gray-700 dark:text-gray-400">
-                Showing <span class="font-semibold text-gray-900">{{ page_obj.start_index }}</span> to <span class="font-semibold text-gray-900">{{ page_obj.end_index }}</span> of <span class="font-semibold text-gray-900">{{ page_obj.paginator.count }}</span> Entries
+                Showing <span class="font-semibold text-gray-900">{{ page_obj.start_index }}</span> to <span
+                    class="font-semibold text-gray-900">{{ page_obj.end_index }}</span> of <span
+                    class="font-semibold text-gray-900">{{ page_obj.paginator.count }}</span> Entries
             </span>
             {% if page_obj.paginator.num_pages > 1 %}
                 <div class="inline-flex mt-2">
