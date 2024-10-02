@@ -32,7 +32,7 @@
                     ☰
                 </button>
                 <a href="{% url 'foryoupage' %}" class="flex ms-2 md:me-24">
-                    <img src="/media/logo.png" class="h-8 me-3" alt="Logo"/>
+                    <img src="/media/logo.png" class="h-12 me-3" alt="Logo"/>
                     <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Social Media App</span>
                 </a>
             </div>
@@ -77,9 +77,6 @@
                                 </li>   
                             </ul>
                         </div>
-                    {% else %}
-                        <a href="{% url 'login' %}"
-                           class="text-sm font-medium text-gray-900 dark:text-white hover:underline">Login</a>
                     {% endif %}
                 </div>
             </div>
@@ -110,13 +107,6 @@
                     <a href="{% url 'create_post' %}"
                        class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                         <span class="flex-1 ms-3 whitespace-nowrap">Add Post</span>
-                    </a>
-                </li>
-            {% else %}
-                <li>
-                    <a href="{% url 'login' %}"
-                       class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                        <span class="flex-1 ms-3 whitespace-nowrap">Login</span>
                     </a>
                 </li>
             {% endif %}
