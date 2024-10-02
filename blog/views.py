@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm
+from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy

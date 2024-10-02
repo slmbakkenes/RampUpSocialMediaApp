@@ -10,6 +10,12 @@
         <form method="post" class="mb-4">
             {% csrf_token %}
 
+            <!-- Username Field -->
+            <div class="mb-5">
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your username</label> <!-- Changed to text-black -->
+                {{ form.username|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+            </div>
+
             <!-- Email Field -->
             <div class="mb-5">
                 <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your email</label> <!-- Changed to text-black -->
