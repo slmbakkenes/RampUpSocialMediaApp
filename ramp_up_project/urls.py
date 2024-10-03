@@ -31,6 +31,7 @@ from blog.views import (
 urlpatterns = [
     # Admin site
     path('admin/', admin.site.urls),
+    path('admin_tools_stats/', include('admin_tools_stats.urls')),
 
     # Authentication views
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
