@@ -1,5 +1,3 @@
-from lib2to3.fixes.fix_input import context
-
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
@@ -35,11 +33,20 @@ class ForYouPageView(LoginRequiredMixin, ListView):
             following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
             queryset = queryset.filter(user__in=following)
 
+        categories = self.request.GET.getlist('categories')
+        if categories:
+            queryset = queryset.filter(categorypost__category__id__in=categories)
+
+
+
         return queryset.order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = Comment.objects.all()
+        context['categoryPosts'] = CategoryPost.objects.all()
+        context['categories'] = Category.objects.all()
+        context['checked'] = self.request.GET.getlist('categories')
         return context
 
 # View for creating a new post
