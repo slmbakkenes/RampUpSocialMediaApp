@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from blog.models import Post, Comment, Follow, User, Profile
+from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
 from forms.post_form import PostForm
 
 # Home view that requires login
@@ -33,11 +33,20 @@ class ForYouPageView(LoginRequiredMixin, ListView):
             following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
             queryset = queryset.filter(user__in=following)
 
+        categories = self.request.GET.getlist('categories')
+        if categories:
+            queryset = queryset.filter(categorypost__category__id__in=categories).distinct()
+
+
+
         return queryset.order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comments'] = Comment.objects.all()
+        context['categoryPosts'] = CategoryPost.objects.all()
+        context['categories'] = Category.objects.all()
+        context['checked'] = self.request.GET.getlist('categories')
         return context
 
 # View for creating a new post
@@ -47,7 +56,16 @@ class PostCreationView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user  # Associate the post with the logged-in user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        categories = form.cleaned_data.get('categories')
+        for category in categories:
+            CategoryPost.objects.create(post=self.object, category=category)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
     def get_success_url(self):
         # Redirect to the user's profile using the username

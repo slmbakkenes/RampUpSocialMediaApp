@@ -5,35 +5,99 @@
 {% block title %}For You Page{% endblock %}
 
 {% block content %}
+    <form method="GET">
+        <div class="flex items-center justify-center pt-4">
+            <button id="dropdownDefault" data-dropdown-toggle="dropdown"
+                    class="max-w-fit text-white justify-center bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    type="button">
+                Filter Categories
+                <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor"
+                     viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div id="dropdown" class="z-10 hidden w-56 p-3 text-center bg-white rounded-lg shadow dark:bg-gray-700">
+                <h6 class="mb-3 text-sm text-gray-900 dark:text-white">
+                    Category
+                </h6>
+                {% if categories|length == 0 %}
+                    <p class="text-gray-900 dark:text-white text-sm">
+                        No Categories yet.
+                    </p>
+                {% endif %}
+                <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" id="categories">
+                    {% for category in categories %}
+                        <li class="flex items-center">
+                            <input id="category_{{ category.id }}" type="checkbox" name="categories"
+                                   value="{{ category.id }}"
+                                    {% if category.id|stringformat:"s" in checked %}
+                                   checked="checked"
+                                    {% endif %}
+                                   class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"/>
+
+                            <label for="category_{{ category.id }}"
+                                   class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {{ category.category_name }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                    <li class="justify-center flex items-center">
+                        <button type="submit"
+                                value="Filter"
+                                class="px-2 py-1 bg-blue-100 border-gray-300 rounded text-gray-900 dark:text-gray-100 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-blue-600 dark:border-gray-500">
+                            Filter
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </form>
+
     {% for post in page_obj %}
         <a href="#"
            class="border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
 
             <!-- User Info Section -->
-            <div class="basis-1/4 flex flex-row justify-between items-center mb-4">
-                <div class="flex flex-row items-center">
-                    <img class="w-1/12 h-auto aspect-square rounded-full object-scale-down"
-                         src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
-                         alt="User Image">
-                    <h4 class="mx-4 text-lg font-semibold text-gray-900 dark:text-white">{{ post.user.username }}</h4>
+            <div class="basis-1/4 lg:basis-1/6 flex flex-row justify-between items-center mb-1">
+                <div class="flex flex-col h-full">
+                    <div class="grow flex flex-row items-center">
+                        <img class="w-1/12 h-auto aspect-square rounded-full object-cover"
+                             src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
+                             alt="User Image">
+                        <h4 class="mx-4 text-lg font-semibold text-gray-900 dark:text-white">{{ post.user.username }}</h4>
+                    </div>
+                    <div class="flex grow items-center mt-1">
+                        <p class="text-lg dark:text-white me-2">Categories:</p>
+                        {% for categoryPost in categoryPosts %}
+                            {% if categoryPost.post.id == post.id %}
+                                <div class="text-xs p-1 md:text-base lg:text-lg rounded bg-blue-100 m-1 ms-0">
+                                    {{ categoryPost.category.category_name }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
-                <button class="justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white">
+                <button class="min-w-fit justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white">
                     Report
                 </button>
             </div>
 
             <!-- Post Info Section -->
-            <div class="flex md:flex-row flex-col basis-3/4 w-auto flex-grow h-full" id="post info">
+            <div class="flex md:flex-row flex-col basis-3/4 lg:basis-5/6 w-auto flex-grow h-full" id="post info">
                 <!-- Post Image and Title -->
-                <div class="basis-1/2 flex flex-col md:mr-4">
-                    <img class="h-3/4 object-scale-down rounded-lg"
+                <div class="basis-1/2 h-full flex flex-col md:mr-4">
+                    <img class="min-h-0 grow max-h-full object-cover rounded-lg"
                             {% if post.image %}
                          src="{{ post.image.url }}"
                             {% else %}
-                         src="/media/post_images/img1.jpg"
+                         src="/media/post_images/blank-post-picture.png"
                             {% endif %}
                          alt="Post Image">
-                    <h2 class="h-1/4 py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
+                    <h2 class="min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
                 </div>
 
                 <!-- Comments Section -->
@@ -71,7 +135,7 @@
 
     {% if page_obj.paginator.count > 0 %}
         <div class="flex flex-col items-center">
-            <span class="text-sm text-gray-700 dark:text-gray-400">
+            <span class="text-sm text-gray-700 dark:text-white">
                 Showing <span class="font-semibold text-gray-900">{{ page_obj.start_index }}</span> to <span
                     class="font-semibold text-gray-900">{{ page_obj.end_index }}</span> of <span
                     class="font-semibold text-gray-900">{{ page_obj.paginator.count }}</span> Entries
