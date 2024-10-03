@@ -35,7 +35,7 @@ class ForYouPageView(LoginRequiredMixin, ListView):
 
         categories = self.request.GET.getlist('categories')
         if categories:
-            queryset = queryset.filter(categorypost__category__id__in=categories)
+            queryset = queryset.filter(categorypost__category__id__in=categories).distinct()
 
 
 

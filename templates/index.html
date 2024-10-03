@@ -74,7 +74,7 @@
                         <p class="text-lg dark:text-white me-2">Categories:</p>
                         {% for categoryPost in categoryPosts %}
                             {% if categoryPost.post.id == post.id %}
-                                <div class="text-xs md:text-base lg:text-lg rounded bg-blue-100 m-1 ms-0">
+                                <div class="text-xs p-1 md:text-base lg:text-lg rounded bg-blue-100 m-1 ms-0">
                                     {{ categoryPost.category.category_name }}
                                 </div>
                             {% endif %}
