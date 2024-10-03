@@ -1,3 +1,5 @@
+from lib2to3.fixes.fix_input import context
+
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
@@ -5,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from blog.models import Post, Comment, Follow, User, Profile
+from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
 from forms.post_form import PostForm
 
 # Home view that requires login
@@ -47,7 +49,16 @@ class PostCreationView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user  # Associate the post with the logged-in user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        categories = form.cleaned_data.get('categories')
+        for category in categories:
+            CategoryPost.objects.create(post=self.object, category=category)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
 
     def get_success_url(self):
         # Redirect to the user's profile using the username

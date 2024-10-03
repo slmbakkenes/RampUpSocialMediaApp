@@ -1,10 +1,16 @@
 from django import forms
-from blog.models import Post
+from blog.models import Post, Category
+
 
 class PostForm(forms.ModelForm):
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
     class Meta:
         model = Post
-        fields = ['image', 'caption']  # We leave 'user' out because it's set automatically.
+        fields = ['image', 'caption', 'categories']  # We leave 'user' out because it's set automatically.
         widgets = {
             'caption': forms.Textarea(attrs={
                 'placeholder': 'Write your caption here...',
@@ -15,6 +21,7 @@ class PostForm(forms.ModelForm):
         labels = {
             'image': 'Post Image',
             'caption': 'Caption',
+            'category': 'Category',
         }
 
     def clean_caption(self):
