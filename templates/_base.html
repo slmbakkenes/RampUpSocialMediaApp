@@ -45,7 +45,7 @@
                                     aria-expanded="false" data-dropdown-toggle="dropdown-user">
                                 <span class="sr-only">Open user menu</span>
                                 <img class="w-8 h-8 rounded-full"
-                                     src="/media/{{ user.profile.picture.url|default:'blank-profile-picture.png' }}"
+                                     src="{{ user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
                                      alt="user photo">
                             </button>
                         </div>
