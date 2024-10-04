@@ -1,6 +1,6 @@
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
@@ -102,9 +102,17 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
+@login_required
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
     profile = get_object_or_404(Profile, user=user)
     posts = Post.objects.filter(user=user)
+
+    if request.method == 'POST' and request.user == user:
+        profile_img = request.FILES.get('profile_img')
+        if profile_img:
+            profile.profile_img = profile_img  # Update the profile image
+            profile.save()  # Save the profile with the new image
+            return redirect('profile', username=user.username)
 
     return render(request, 'profile/profile.html', {'user': user, 'profile': profile, 'posts': posts})
