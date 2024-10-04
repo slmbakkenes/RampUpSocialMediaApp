@@ -5,33 +5,33 @@
 
 {% block content %}
 <div class="flex items-center justify-center min-h-screen">
-    <div class="max-w-sm w-full bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold text-center mb-5">Sign up</h2>
+    <div class="max-w-sm w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
+        <h2 class="text-2xl font-bold text-center mb-5 text-white">Sign up</h2> <!-- Text color changed to white -->
         <form method="post" class="mb-4">
             {% csrf_token %}
 
             <!-- Username Field -->
             <div class="mb-5">
-                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your username</label>
-                {{ form.username|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Your username</label> <!-- Changed to text-white -->
+                {{ form.username|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Email Field -->
             <div class="mb-5">
-                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your email</label>
-                {{ form.email|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Your email</label> <!-- Changed to text-white -->
+                {{ form.email|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Password Field -->
             <div class="mb-5">
-                <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your password</label>
-                {{ form.password1|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Your password</label> <!-- Changed to text-white -->
+                {{ form.password1|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Confirm Password Field -->
             <div class="mb-5">
-                <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Repeat password</label>
-                {{ form.password2|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Repeat password</label> <!-- Changed to text-white -->
+                {{ form.password2|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Terms and Conditions -->
@@ -39,9 +39,9 @@
                 <div class="flex items-center h-5">
                     <input id="terms" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
                 </div>
-                <label for="terms" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    I agree with the 
-                    <a href="#" id="openTerms" class="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a>
+                <label for="terms" class="ms-2 text-sm font-medium text-white"> <!-- Changed to text-white -->
+                    I agree with the
+                    <a href="#" id="openTerms" class="text-[#FFA500] hover:underline">terms and conditions</a> <!-- Changed link color to orange -->
                 </label>
             </div>
 
