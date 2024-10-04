@@ -5,32 +5,32 @@
 
 {% block content %}
 <div class="flex items-center justify-center min-h-screen">
-    <div class="max-w-sm w-full bg-white shadow-md rounded-lg p-6"> <!-- Added background and padding -->
+    <div class="max-w-sm w-full bg-white shadow-md rounded-lg p-6">
         <h2 class="text-2xl font-bold text-center mb-5">Sign up</h2>
         <form method="post" class="mb-4">
             {% csrf_token %}
 
             <!-- Username Field -->
             <div class="mb-5">
-                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your username</label> <!-- Changed to text-black -->
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your username</label>
                 {{ form.username|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
             </div>
 
             <!-- Email Field -->
             <div class="mb-5">
-                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your email</label> <!-- Changed to text-black -->
+                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your email</label>
                 {{ form.email|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
             </div>
 
             <!-- Password Field -->
             <div class="mb-5">
-                <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your password</label> <!-- Changed to text-black -->
+                <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your password</label>
                 {{ form.password1|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
             </div>
 
             <!-- Confirm Password Field -->
             <div class="mb-5">
-                <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Repeat password</label> <!-- Changed to text-black -->
+                <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Repeat password</label>
                 {{ form.password2|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
             </div>
 
@@ -39,14 +39,40 @@
                 <div class="flex items-center h-5">
                     <input id="terms" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
                 </div>
-                <label for="terms" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">I agree with the <a href="#" class="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a></label>
+                <label for="terms" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    I agree with the 
+                    <a href="#" id="openTerms" class="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a>
+                </label>
             </div>
 
             <!-- Submit Button -->
-            <div class="flex justify-center"> <!-- Center the button -->
+            <div class="flex justify-center">
                 <button type="submit" class="text-black bg-[#60A9B4] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Register new account</button>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Modal -->
+<div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg p-6 max-w-lg mx-auto">
+        <h3 class="text-xl font-bold mb-4">Terms and Conditions</h3>
+        <p class="mb-4">
+            <!-- Your terms and conditions text here -->
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+        <button id="closeModal" class="text-black bg-[#60A9B4] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">Close</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('openTerms').addEventListener('click', function (event) {
+        event.preventDefault();
+        document.getElementById('termsModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeModal').addEventListener('click', function () {
+        document.getElementById('termsModal').classList.add('hidden');
+    });
+</script>
 {% endblock %}
