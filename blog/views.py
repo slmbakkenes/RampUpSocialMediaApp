@@ -1,8 +1,9 @@
+from blog.forms import ProfileForm
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
@@ -102,17 +103,33 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
-@login_required
-def profile_view(request, username):
-    user = get_object_or_404(User, username=username)
-    profile = get_object_or_404(Profile, user=user)
-    posts = Post.objects.filter(user=user)
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'profile/profile.html'
+    context_object_name = 'user'
 
-    if request.method == 'POST' and request.user == user:
-        profile_img = request.FILES.get('profile_img')
-        if profile_img:
-            profile.profile_img = profile_img  # Update the profile image
-            profile.save()  # Save the profile with the new image
-            return redirect('profile', username=user.username)
+    def get_object(self, queryset=None):
+        return get_object_or_404(User, username=self.kwargs['username'])
 
-    return render(request, 'profile/profile.html', {'user': user, 'profile': profile, 'posts': posts})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        context['profile'] = get_object_or_404(Profile, user=user)
+        context['posts'] = Post.objects.filter(user=user)
+        return context
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileForm
+    template_name = 'profile/profile_update.html'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self, queryset=None):
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        return get_object_or_404(Profile, user=user)
+
+    def form_valid(self, form):
+        profile = form.save(commit=False)
+        profile.save()
+        return redirect('profile', username=self.kwargs['username'])

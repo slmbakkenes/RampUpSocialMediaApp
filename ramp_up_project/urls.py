@@ -25,7 +25,8 @@ from blog.views import (
     PostCreationView,
     ListPostsView,
     PostUpdateView,
-    profile_view,
+    ProfileDetailView,
+    ProfileUpdateView,
 )
 
 urlpatterns = [
@@ -47,7 +48,8 @@ urlpatterns = [
     path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
 
     # Profile view
-    path('profile/<str:username>/', profile_view, name='profile'),
+    path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
+    path('profile/<str:username>/update/', ProfileUpdateView.as_view(), name='profile_update'),
 
     # Default authentication URLs (includes password reset, etc.)
     path('accounts/', include('django.contrib.auth.urls')),
