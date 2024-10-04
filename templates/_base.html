@@ -62,19 +62,20 @@
                             <ul class="py-1" role="none">
                                 <li>
                                     <a href="{% url 'profile' user.username %}"
-                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white text-center"
                                        role="menuitem">Account</a>
                                 </li>
                                 <li>
-                                    <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                                    <form id="logout-form" action="{% url 'logout' %}" method="POST"
+                                          style="display: none;">
                                         {% csrf_token %}
                                     </form>
-                                    <button type="button" 
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    <button type="button"
+                                            class="block w-full px-4 py-2 text-sm text-red-500 hover:bg-red-100 dark:text-red-400 dark:hover:bg-gray-600 dark:hover:text-white"
                                             onclick="document.getElementById('logout-form').submit();">
                                         Sign out
                                     </button>
-                                </li>   
+                                </li>
                             </ul>
                         </div>
                     {% endif %}
