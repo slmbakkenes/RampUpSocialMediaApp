@@ -20,6 +20,48 @@
 </head>
 
 <body style="background-color: #60A9B4;">
+<!-- Add jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // When the like button is pressed, prevent the form from being submitted in the usual way
+        $('.like-form').submit(function (e) {
+            e.preventDefault();  // Prevent the form from reloading the page
+
+            const form = $(this);  // Reference to the current form
+            const post_id = form.data('post-id');  // Get the post_id from the data attribute
+            const csrf_token = form.find('input[name="csrfmiddlewaretoken"]').val();  // Get the CSRF token
+
+            // Start AJAX request
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_like_post' %}",  // Django URL for the like/unlike action
+                data: {
+                    'post_id': post_id,
+                    'csrfmiddlewaretoken': csrf_token,
+                },
+                success: function (response) {
+                    // Process the response: Update the like/unlike button and the number of likes
+                    const likeButton = form.find('button');
+                    const likesCount = form.next('.likes-count');  // The likes count next to the form
+
+                    if (response.liked) {
+                        likeButton.text('Unlike');  // Change the text to 'Unlike' if the user has liked the post
+                    } else {
+                        likeButton.text('Like');  // Change the text to 'Like' if the user has unliked the post
+                    }
+
+                    // Update the number of likes
+                    likesCount.text(response.no_of_likes + ' likes');
+                },
+                error: function (response) {
+                    console.error('Error:', response);  // Log any errors
+                }
+            });
+        });
+    });
+</script>
 <!-- Navbar -->
 <nav class="fixed top-0 z-50 w-full border-b border-gray-200 dark:border-gray-700" style="background-color: #93CDDE;">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
