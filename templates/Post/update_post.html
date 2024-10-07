@@ -1,0 +1,89 @@
+{% extends '_base.html' %}  
+{% load widget_tweaks %}  
+
+{% block content %}  
+    <div class="flex items-center justify-center min-h-screen">  
+        <div class="max-w-md w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->  
+            <h1 class="text-2xl font-bold text-center mb-5 text-white">Update Your Post</h1> <!-- Changed text to indicate update -->  
+
+            <form method="POST" enctype="multipart/form-data" class="mb-4">  
+                {% csrf_token %}  
+                
+                <!-- Category Field -->  
+                <div class="flex items-center justify-center py-4">  
+                    <button id="dropdownDefault" data-dropdown-toggle="dropdown"  
+                            class="w-full text-white justify-center bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center"  
+                            type="button">  
+                        Select Categories  
+                        <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor"  
+                             viewBox="0 0 24 24"  
+                             xmlns="http://www.w3.org/2000/svg">  
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"  
+                                  d="M19 9l-7 7-7-7"></path>  
+                        </svg>  
+                    </button>  
+
+                    <!-- Dropdown menu -->  
+                    <div id="dropdown" class="z-10 hidden w-56 p-3 text-center bg-white rounded-lg shadow dark:bg-gray-700">  
+                        <h6 class="mb-3 text-sm text-gray-900 dark:text-white">  
+                            Categories  
+                        </h6>  
+                        {% if categories|length == 0 %}  
+                            <p class="text-gray-900 dark:text-white text-sm">  
+                                No Categories yet.  
+                            </p>  
+                        {% endif %}  
+                        <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault" id="categories">  
+                            {% for category in categories %}  
+                                <li class="flex items-center">  
+                                    <input id="category_{{ category.id }}" type="checkbox" name="categories" value="{{ category.id }}"  
+                                           class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"  
+                                           {% if category.id in selected_categories %}checked{% endif %}/> <!-- Check if category is selected -->  
+
+                                    <label for="category_{{ category.id }}"  
+                                           class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">  
+                                        {{ category.category_name }}  
+                                    </label>  
+                                </li>  
+                            {% endfor %}  
+                        </ul>  
+                    </div>  
+                </div>  
+
+                <!-- Caption Field -->  
+                <div class="mb-5">  
+                    <label for="caption" class="block mb-2 text-sm font-medium text-gray-300">Caption:</label>  
+                    <textarea id="caption" name="caption" rows="4"  
+                              class="shadow-sm bg-gray-700 border border-gray-600 text-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">{{ post.caption }}</textarea> <!-- Prefill with current caption -->  
+                </div>  
+
+                <!-- Image Upload Field -->  
+                <div class="mb-5">  
+                    <label for="image" class="block mb-2 text-sm font-medium text-gray-300">Image (optional):</label>  
+                    <input type="file" id="image" name="image"  
+                           class="block w-full text-sm text-gray-300 border border-gray-600 rounded-lg cursor-pointer bg-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"/> <!-- Preserving the design -->  
+                </div>  
+
+                <!-- Current Image Display -->  
+                {% if post.image %}  
+                    <div class="mb-5">  
+                        <p class="text-sm font-medium text-gray-300">Current Image:</p>  
+                        <img src="{{ post.image.url }}" alt="Current Image" class="mt-2 w-full rounded-lg"> <!-- Display current image -->  
+                    </div>  
+                {% endif %}  
+
+                <!-- Submit Button -->  
+                <div class="flex justify-center">  
+                    <button type="submit"  
+                            class="text-black bg-[#60A9B4] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">  
+                        Update Post  
+                    </button>  
+                </div>  
+            </form>  
+
+            {% if error %}  
+                <p class="text-red-500 text-center">{{ error }}</p> <!-- Error message styling -->  
+            {% endif %}  
+        </div>  
+    </div>  
+{% endblock %}
