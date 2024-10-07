@@ -1,3 +1,5 @@
+from django.contrib import messages
+
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
@@ -68,6 +70,7 @@ class PostCreationView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
+        messages.success(self.request, "Successfully created post!")
         # Redirect to the user's profile using the username
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 

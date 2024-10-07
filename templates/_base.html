@@ -10,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
 
     <title>{% block title %}Social Media App{% endblock %}</title>
 
@@ -20,6 +21,45 @@
 </head>
 
 <body style="background-color: #60A9B4;">
+{% if messages %}
+    <div id="info-popup" tabindex="-1"
+         class="overflow-y-auto overflow-x-hidden sm:ml-64 fixed top-0 right-0 left-0 z-50 max-w-screen h-modal h-full no-shadow"
+         style="box-shadow: none !important;">
+        <div class="relative p-4 w-full h-full flex flex-col justify-end md:justify-center items-center">
+            {% for message in messages %}
+                <div class="relative flex items-center p-4 bg-white rounded-lg dark:bg-gray-800 md:p-8 space-x-2">
+                    <div class="text-gray-500 dark:text-gray-400">
+                        {{ message }}
+                    </div>
+                    <button id="close-modal" type="button"
+                            class="max-h-fit py-2 px-4 w-full text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 sm:w-auto hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                        Dismiss
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+<script>
+    const modalEl = document.getElementById('info-popup');
+    const privacyModal = new Modal(modalEl, {
+        placement: 'center'
+    });
+
+    privacyModal.show();
+
+    const closeModalEl = document.getElementById('close-modal');
+    closeModalEl.addEventListener('click', function () {
+        privacyModal.hide();
+    });
+
+    const acceptPrivacyEl = document.getElementById('confirm-button');
+    acceptPrivacyEl.addEventListener('click', function () {
+        alert('privacy accepted');
+        privacyModal.hide();
+    });
+</script>
+
 <!-- Navbar -->
 <nav class="fixed top-0 z-50 w-full border-b border-gray-200 dark:border-gray-700" style="background-color: #93CDDE;">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
@@ -66,15 +106,16 @@
                                        role="menuitem">Account</a>
                                 </li>
                                 <li>
-                                    <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: none;">
+                                    <form id="logout-form" action="{% url 'logout' %}" method="POST"
+                                          style="display: none;">
                                         {% csrf_token %}
                                     </form>
-                                    <button type="button" 
+                                    <button type="button"
                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                             onclick="document.getElementById('logout-form').submit();">
                                         Sign out
                                     </button>
-                                </li>   
+                                </li>
                             </ul>
                         </div>
                     {% endif %}
