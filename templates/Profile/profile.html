@@ -1,37 +1,45 @@
-{% extends '_base.html' %}
-{% load widget_tweaks %}
+{% extends '_base.html' %}  
+{% load widget_tweaks %}  
 
-{% block content %}
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="max-w-lg w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
-            <h1 class="text-2xl font-bold text-center text-white">{{ user.username }}'s Profile</h1> <!-- Changed text color to white -->
+{% block content %}  
+    <div class="flex items-center justify-center min-h-screen">  
+        <div class="max-w-lg w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->  
+            <h1 class="text-2xl font-bold text-center text-white">{{ user.username }}'s Profile</h1> <!-- Changed text color to white -->  
 
-            <div class="mt-4 mb-6 text-center">
-                <img src="{{ profile.profile_img.url }}" alt="{{ user.username }}'s profile image"
-                     class="rounded-full w-24 h-24 mx-auto">
-                <p class="mt-2 text-white">{{ profile.bio }}</p> <!-- Changed text color to white -->
-            </div>
+            <div class="mt-4 mb-6 text-center">  
+                <img src="{{ profile.profile_img.url }}" alt="{{ user.username }}'s profile image"  
+                     class="rounded-full w-24 h-24 mx-auto">  
+                <p class="mt-2 text-white">{{ profile.bio }}</p> <!-- Changed text color to white -->  
+            </div>  
 
-            <div class="mb-6 text-center">
-                <a href="{% url 'profile_update' user.username %}" 
-                   class="bg-[#60A9B4] hover:bg-blue-800 text-black font-bold py-2 px-4 rounded"> <!-- Adjusted button color -->
-                    Edit Profile
-                </a>
-            </div>
+            <div class="mb-6 text-center">  
+                <a href="{% url 'profile_update' user.username %}"   
+                   class="bg-[#60A9B4] hover:bg-blue-800 text-black font-bold py-2 px-4 rounded"> <!-- Adjusted button color -->  
+                    Edit Profile  
+                </a>  
+            </div>  
 
-            <h2 class="text-xl mt-4 font-semibold text-white">Your Posts:</h2> <!-- Changed text color to white -->
-            {% if posts %}
-                <ul class="space-y-4 mt-4">
-                    {% for post in posts %}
-                        <li class="border border-gray-300 p-4 rounded-lg shadow-md bg-white"> <!-- Changed background for posts to white -->
-                            <p class="mt-2 text-gray-800">{{ post.caption }}</p>
-                            <p class="text-gray-600">Likes: {{ post.no_of_likes }}</p>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-gray-600 mt-4">No posts available.</p>
-            {% endif %}
-        </div>
-    </div>
-{% endblock %}
+            <h2 class="text-xl mt-4 font-semibold text-white">Your Posts:</h2> <!-- Changed text color to white -->  
+            {% if posts %}  
+                <ul class="space-y-4 mt-4">  
+                    {% for post in posts %}  
+                        <li class="border border-gray-300 p-4 rounded-lg shadow-md bg-white"> <!-- Changed background for posts to white -->  
+                            <p class="mt-2 text-gray-800">{{ post.caption }}</p>  
+                            <p class="text-gray-600">Likes: {{ post.no_of_likes }}</p>  
+                            <div class="mt-4">  
+                                <form action="{% url 'post_delete' post.id %}" method="post">  
+                                    {% csrf_token %}  
+                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">  
+                                        Delete Post  
+                                    </button>  
+                                </form>  
+                            </div>  
+                        </li>  
+                    {% endfor %}  
+                </ul>  
+            {% else %}  
+                <p class="text-gray-600 mt-4">No posts available.</p>  
+            {% endif %}  
+        </div>  
+    </div>  
+{% endblock %} 
