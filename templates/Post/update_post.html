@@ -3,8 +3,8 @@
 
 {% block content %}  
     <div class="flex items-center justify-center min-h-screen">  
-        <div class="max-w-md w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->  
-            <h1 class="text-2xl font-bold text-center mb-5 text-white">Update Your Post</h1> <!-- Changed text to indicate update -->  
+        <div class="max-w-md w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
+            <h1 class="text-2xl font-bold text-center mb-5 text-white">Update Your Post</h1> <!-- Changed text to indicate update -->
 
             <form method="POST" enctype="multipart/form-data" class="mb-4">  
                 {% csrf_token %}  
@@ -38,7 +38,7 @@
                                 <li class="flex items-center">  
                                     <input id="category_{{ category.id }}" type="checkbox" name="categories" value="{{ category.id }}"  
                                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"  
-                                           {% if category.id in selected_categories %}checked{% endif %}/> <!-- Check if category is selected -->  
+                                           {% if category.id in selected_categories %}checked{% endif %}/> <!-- Check if category is selected -->
 
                                     <label for="category_{{ category.id }}"  
                                            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">  
@@ -54,14 +54,14 @@
                 <div class="mb-5">  
                     <label for="caption" class="block mb-2 text-sm font-medium text-gray-300">Caption:</label>  
                     <textarea id="caption" name="caption" rows="4"  
-                              class="shadow-sm bg-gray-700 border border-gray-600 text-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">{{ post.caption }}</textarea> <!-- Prefill with current caption -->  
+                              class="shadow-sm bg-gray-700 border border-gray-600 text-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">{{ post.caption }}</textarea> <!-- Prefill with current caption -->
                 </div>  
 
                 <!-- Image Upload Field -->  
                 <div class="mb-5">  
                     <label for="image" class="block mb-2 text-sm font-medium text-gray-300">Image (optional):</label>  
                     <input type="file" id="image" name="image"  
-                           class="block w-full text-sm text-gray-300 border border-gray-600 rounded-lg cursor-pointer bg-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"/> <!-- Preserving the design -->  
+                           class="block w-full text-sm text-gray-300 border border-gray-600 rounded-lg cursor-pointer bg-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"/> <!-- Preserving the design -->
                 </div>  
 
                 <!-- Current Image Display -->  
