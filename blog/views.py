@@ -5,8 +5,6 @@ from blog.models import Post, Comment, User, Profile, Category, CategoryPost, Li
 from blog.models import Follow as FollowModel
 from forms.post_form import PostForm
 from forms.user_create_form import UserCreationForm
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.urls import reverse
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView, RedirectView
@@ -248,6 +246,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         profile = form.save(commit=False)
         profile.save()
+        success_message(self)
         return redirect('profile', username=self.kwargs['username'])
 
 # Method to take an invalid form and pass an error message
