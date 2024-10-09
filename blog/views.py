@@ -70,7 +70,7 @@ class PostCreationView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, "Successfully created post!")
+        messages.error(self.request, "Successfully created post!")
         # Redirect to the user's profile using the username
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 

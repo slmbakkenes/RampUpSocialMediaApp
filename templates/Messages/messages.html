@@ -1,0 +1,30 @@
+{% if messages %}
+    {% for message in messages %}
+        <div id="popup-{{ forloop.counter }}" tabindex="-1"
+             class="flex flex-col overflow-y-auto overflow-x-hidden sm:ml-64 pt-[4.5rem] fixed top-0 right-0 left-0 z-50 max-w-screen h-modal h-full justify-end">
+            <div class="space-y-5 w-full p-4">
+                {% if message.level == 25 %}
+                    
+                {% elif message.level == 40 %}
+                    
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+<script>
+    document.querySelectorAll('.close-modal').forEach((button, index) => {
+        const modalEl = document.getElementById(`popup-${index + 1}`);
+        const modal = new Modal(modalEl, {
+            placement: 'bottom-right',
+            backdropClasses: 'no-shadow',
+            closable: false,
+        });
+
+        modal.show();
+
+        button.addEventListener('click', function () {
+            modal.hide();
+        });
+    });
+</script>
