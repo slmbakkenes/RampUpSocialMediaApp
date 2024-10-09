@@ -20,6 +20,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from blog.views import (
+    FollowersView,
     SignUpView,
     ForYouPageView,
     PostCreationView,
@@ -27,6 +28,8 @@ from blog.views import (
     PostUpdateView,
     ProfileDetailView,
     ProfileUpdateView,
+    Unfollow,
+    Follow,
 )
 
 urlpatterns = [
@@ -50,6 +53,10 @@ urlpatterns = [
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
     path('profile/<str:username>/update/', ProfileUpdateView.as_view(), name='profile_update'),
+    
+    # Followers
+    path('follow/<str:username>/', Follow.as_view(), name='follow'),
+    path('unfollow/<str:username>/', Unfollow.as_view(), name='unfollow'),
 
     # Default authentication URLs (includes password reset, etc.)
     path('accounts/', include('django.contrib.auth.urls')),

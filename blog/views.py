@@ -1,18 +1,63 @@
 from blog.forms import ProfileForm
+from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
+from blog.models import Follow as FollowModel
+from forms.post_form import PostForm
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView
+from django.urls import reverse
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView, RedirectView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
-from forms.post_form import PostForm
+from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Home view that requires login
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
     login_url = 'login'  # Redirect to login if not authenticated
+
+# View for all followers posts
+class FollowersView(LoginRequiredMixin, TemplateView):
+    template_name = 'followers.html'
+    login_url = 'login'  # Redirect to login if not authenticated
+
+# Class-based view for following a user
+class Follow(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Get the user to be followed
+        user_to_follow = get_object_or_404(User, username=kwargs['username'])
+        
+        # Check if the logged-in user is not already following the user
+        if not FollowModel.objects.filter(follower=self.request.user, following=user_to_follow).exists():
+            # Create the follow relationship
+            FollowModel.objects.create(follower=self.request.user, following=user_to_follow)
+
+        # Redirect back to the profile page of the followed user
+        return reverse('profile', kwargs={'username': user_to_follow.username})
+
+
+# Class-based view for unfollowing a user
+class Unfollow(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        # Get the user to be unfollowed
+        user_to_unfollow = get_object_or_404(User, username=kwargs['username'])
+        
+        # Check if the logged-in user is following the user
+        follow_relation = FollowModel.objects.filter(follower=self.request.user, following=user_to_unfollow)
+        if follow_relation.exists():
+            # Remove the follow relationship
+            follow_relation.delete()
+
+        # Redirect back to the profile page of the unfollowed user
+        return reverse('profile', kwargs={'username': user_to_unfollow.username})
+
+
 
 # Sign-up view for creating a new user
 class SignUpView(CreateView):
@@ -31,7 +76,7 @@ class ForYouPageView(LoginRequiredMixin, ListView):
         path = self.request.path
 
         if "/foryoupage/" == path:
-            following = Follow.objects.filter(follower=self.request.user).values_list('following', flat=True)
+            following = FollowModel.objects.filter(follower=self.request.user).values_list('following', flat=True)
             queryset = queryset.filter(user__in=following)
 
         categories = self.request.GET.getlist('categories')
@@ -109,13 +154,38 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'user'
 
     def get_object(self, queryset=None):
+        # Get the user based on the username in the URL
         return get_object_or_404(User, username=self.kwargs['username'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
+
+        # Get the profile of the user
         context['profile'] = get_object_or_404(Profile, user=user)
-        context['posts'] = Post.objects.filter(user=user)
+        context['self'] = self.request.user
+
+        # Get all posts of the user
+        posts = Post.objects.filter(user=user).order_by('-created_at')
+
+        # Pagination setup
+        paginator = Paginator(posts, 15)  # Show 15 posts per page
+        page = self.request.GET.get('page')  # Get the page number from the request
+
+        try:
+            paginated_posts = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_posts = paginator.page(1)  # If page is not an integer, deliver the first page
+        except EmptyPage:
+            paginated_posts = paginator.page(paginator.num_pages)  # If page is out of range, deliver the last page
+
+        # Add paginated posts and pagination object to the context
+        context['posts'] = paginated_posts
+        context['page_obj'] = paginated_posts  # Add page_obj to maintain consistency with other views
+        context['is_paginated'] = paginated_posts.has_other_pages()  # Flag to indicate if pagination is needed
+
+        context['is_following'] = FollowModel.objects.filter(follower=self.request.user, following=user).exists()
+
         return context
 
 

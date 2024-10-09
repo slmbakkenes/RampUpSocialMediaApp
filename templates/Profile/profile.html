@@ -12,12 +12,28 @@
                 <p class="mt-2 text-white">{{ profile.bio }}</p> <!-- Changed text color to white -->
             </div>
 
+            {% if user.username == self.username %}
             <div class="mb-6 text-center">
                 <a href="{% url 'profile_update' user.username %}" 
                    class="bg-[#60A9B4] hover:bg-blue-800 text-black font-bold py-2 px-4 rounded"> <!-- Adjusted button color -->
                     Edit Profile
                 </a>
             </div>
+            {% elif is_following == False %}
+            <div class="mb-6 text-center">
+                <a href="{% url 'follow' user.username %}"
+                   class="cursor-pointer bg-[#60A9B4] hover:bg-blue-800 text-black font-bold py-2 px-4 rounded"> <!-- Adjusted button color -->
+                    Follow {{ user.username }}
+                </a>
+            </div>
+            {% elif is_following == True %}
+            <div class="mb-6 text-center">
+                <a href="{% url 'unfollow' user.username %}"
+                   class="cursor-pointer bg-[#60A9B4] hover:bg-blue-800 text-black font-bold py-2 px-4 rounded"> <!-- Adjusted button color -->
+                    Unfollow {{ user.username }}
+                </a>
+            </div>
+            {% endif %}
 
             <h2 class="text-xl mt-4 font-semibold text-white">Your Posts:</h2> <!-- Changed text color to white -->
             {% if posts %}
