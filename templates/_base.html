@@ -21,51 +21,6 @@
 </head>
 
 <body style="background-color: #60A9B4;">
-<!-- Add jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-        // Handle the like button click event
-        $('.like-form').submit(function (e) {
-            e.preventDefault();  // Prevent default form submission
-
-            const form = $(this);  // Get the current form
-            const post_id = form.data('post-id');  // Get the post_id from the data attribute
-            const csrf_token = form.find('input[name="csrfmiddlewaretoken"]').val();  // Get CSRF token
-
-            // Start AJAX request
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'ajax_like_post' %}",  // Django URL for the like/unlike action
-                data: {
-                    'post_id': post_id,
-                    'csrfmiddlewaretoken': csrf_token,
-                },
-                success: function (response) {
-                    // Process the response: Update the button icon and number of likes
-                    const likeButton = form.find('button');
-                    const icon = likeButton.find('i');  // Get the icon inside the button
-                    const likesCount = likeButton.find('span');  // Get the span with the number of likes
-
-                    if (response.liked) {
-                        // If the post is liked, show the filled thumbs-up icon
-                        icon.attr('class', 'fas fa-thumbs-up text-white text-2xl');
-                    } else {
-                        // If the post is unliked, show the outlined thumbs-up icon
-                        icon.attr('class', 'far fa-thumbs-up text-white text-2xl');
-                    }
-
-                    // Update the number of likes next to the icon
-                    likesCount.text(response.no_of_likes);
-                },
-                error: function (response) {
-                    console.error('Error:', response);  // Log any errors
-                }
-            });
-        });
-    });
-</script>
 <!-- Navbar -->
 <nav class="fixed top-0 z-50 w-full border-b border-gray-200 dark:border-gray-700" style="background-color: #93CDDE;">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
@@ -178,5 +133,51 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+
+<!-- Add jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Handle the like button click event
+        $('.like-form').submit(function (e) {
+            e.preventDefault();  // Prevent default form submission
+
+            const form = $(this);  // Get the current form
+            const post_id = form.data('post-id');  // Get the post_id from the data attribute
+            const csrf_token = form.find('input[name="csrfmiddlewaretoken"]').val();  // Get CSRF token
+
+            // Start AJAX request
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'ajax_like_post' %}",  // Django URL for the like/unlike action
+                data: {
+                    'post_id': post_id,
+                    'csrfmiddlewaretoken': csrf_token,
+                },
+                success: function (response) {
+                    // Process the response: Update the button icon and number of likes
+                    const likeButton = form.find('button');
+                    const icon = likeButton.find('i');  // Get the icon inside the button
+                    const likesCount = likeButton.find('span');  // Get the span with the number of likes
+
+                    if (response.liked) {
+                        // If the post is liked, show the filled thumbs-up icon
+                        icon.attr('class', 'fas fa-thumbs-up text-white text-2xl');
+                    } else {
+                        // If the post is unliked, show the outlined thumbs-up icon
+                        icon.attr('class', 'far fa-thumbs-up text-white text-2xl');
+                    }
+
+                    // Update the number of likes next to the icon
+                    likesCount.text(response.no_of_likes);
+                },
+                error: function (response) {
+                    console.error('Error:', response);  // Log any errors
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

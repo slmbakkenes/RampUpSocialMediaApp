@@ -97,26 +97,7 @@
                          src="/media/post_images/blank-post-picture.png"
                             {% endif %}
                          alt="Post Image">
-
-                    <!-- Like buttons -->
-                    <div class="flex items-center justify-between mt-2">
-                        <!-- AJAX Like form -->
-                        <form class="like-form flex items-center" data-post-id="{{ post.id }}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="px-3 py-2 bg-transparent text-white flex items-center">
-                                {% if post.id in liked_posts %}
-                                    <!-- Show filled thumbs-up if liked -->
-                                    <i class="fas fa-thumbs-up text-white text-2xl"></i>
-                                {% else %}
-                                    <!-- Show outlined thumbs-up if not liked -->
-                                    <i class="far fa-thumbs-up text-white text-2xl"></i>
-                                {% endif %}
-                                <span class="ml-2">{{ post.no_of_likes }}</span>
-                                <!-- Number of likes next to the icon -->
-                            </button>
-                        </form>
-                    </div>
-
+                        {% include 'LIkePost/Like.html' %}
                     <h2 class="min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
                 </div>
 
@@ -163,12 +144,7 @@
             {% if page_obj.paginator.num_pages > 1 %}
                 <div class="inline-flex mt-2">
                     <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                       href="?page=
-                               
-                               
-                               
-                               
-                               {% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}{{ page_obj.start_index }}{% endif %}">
+                       href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}{{ page_obj.start_index }}{% endif %}">
                         <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
                              xmlns="http://www.w3.org/2000/svg"
                              fill="none" viewBox="0 0 14 10">
@@ -178,12 +154,7 @@
                         Prev
                     </a>
                     <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                       href="?page=
-                               
-                               
-                               
-                               
-                               {% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ page_obj.end_index }}{% endif %}">
+                       href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ page_obj.end_index }}{% endif %}">
                         Next
                         <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true"
                              xmlns="http://www.w3.org/2000/svg"

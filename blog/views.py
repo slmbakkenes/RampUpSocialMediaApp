@@ -1,10 +1,8 @@
-# views.py
-from blog import models
 from blog.forms import ProfileForm
 from forms.user_create_form import UserCreationForm
-from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy, reverse
+from django.http import HttpResponseForbidden, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -112,31 +110,38 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
-@login_required
-def like_post(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        post_id = request.POST.get('post_id')
-        post = get_object_or_404(Post, id=post_id)
-        like = LikePost.objects.filter(post=post, user=request.user).first()
-        liked = False
+class LikePostView(LoginRequiredMixin, TemplateView):
+    def post(self, request, *args, **kwargs):
+        # Ensure the request is an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            post_id = request.POST.get('post_id')  # Get the post ID from the request
+            post = get_object_or_404(Post, id=post_id)  # Fetch the post object
+            liked = False  # Track if the post is liked or unliked
 
-        if like:
-            like.delete()
-            post.no_of_likes -= 1
-            post.save()
-        else:
-            new_like = LikePost(post=post, user=request.user)
-            new_like.save()
-            post.no_of_likes += 1
-            post.save()
-            liked = True
+            # Check if the post has already been liked by this user
+            like = LikePost.objects.filter(post=post, user=request.user).first()
 
-        return JsonResponse({
-            'liked': liked,
-            'no_of_likes': post.no_of_likes,
-        })
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+            if like:
+                # If already liked, unlike it
+                like.delete()
+                post.no_of_likes -= 1
+                post.save()  # Save the updated like count
+            else:
+                # If not liked, create a new like
+                new_like = LikePost(post=post, user=request.user)
+                new_like.save()
+                post.no_of_likes += 1
+                post.save()  # Save the updated like count
+                liked = True
 
+            # Return a JSON response with the updated like status and like count
+            return JsonResponse({
+                'liked': liked,
+                'no_of_likes': post.no_of_likes,
+            })
+
+        # If it's not a valid AJAX request, return an error
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
