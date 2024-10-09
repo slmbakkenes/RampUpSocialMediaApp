@@ -25,9 +25,9 @@ from blog.views import (
     PostCreationView,
     ListPostsView,
     PostUpdateView,
+    PostDeleteView,
     ProfileDetailView,
     ProfileUpdateView,
-    PostDeleteView,
 )
 
 urlpatterns = [
