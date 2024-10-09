@@ -4,6 +4,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from blog.views import (
+    FollowersView,
     SignUpView,
     ForYouPageView,
     PostCreationView,
@@ -11,6 +12,8 @@ from blog.views import (
     PostUpdateView,
     ProfileDetailView,
     ProfileUpdateView,
+    Unfollow,
+    Follow,
     LikePostView,
 )
 
@@ -35,6 +38,10 @@ urlpatterns = [
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
     path('profile/<str:username>/update/', ProfileUpdateView.as_view(), name='profile_update'),
+    
+    # Followers
+    path('follow/<str:username>/', Follow.as_view(), name='follow'),
+    path('unfollow/<str:username>/', Unfollow.as_view(), name='unfollow'),
 
     # Like Post URL using the class-based view
     path('post/<uuid:post_id>/like/', LikePostView.as_view(), name='like_post'),
