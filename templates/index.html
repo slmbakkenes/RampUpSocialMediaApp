@@ -5,7 +5,7 @@
 {% block title %}For You Page{% endblock %}
 
 {% block content %}
-    <form method="GET" class="mb-4"> 
+    <form method="GET" class="mb-4">
         <div class="flex items-center justify-center pt-4">
             <button id="dropdownDefault" data-dropdown-toggle="dropdown"
                     class="max-w-fit text-white justify-center bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
@@ -97,6 +97,7 @@
                          src="/media/post_images/blank-post-picture.png"
                             {% endif %}
                          alt="Post Image">
+                        {% include 'Like/Like.html' %}
                     <h2 class="min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
                 </div>
 
@@ -143,7 +144,7 @@
             {% if page_obj.paginator.num_pages > 1 %}
                 <div class="inline-flex mt-2">
                     <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                        href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}{{ page_obj.start_index }}{% endif %}">
+                       href="?page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}{{ page_obj.start_index }}{% endif %}">
                         <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true"
                              xmlns="http://www.w3.org/2000/svg"
                              fill="none" viewBox="0 0 14 10">
@@ -153,7 +154,7 @@
                         Prev
                     </a>
                     <a class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-800 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                        href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ page_obj.end_index }}{% endif %}">
+                       href="?page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ page_obj.end_index }}{% endif %}">
                         Next
                         <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true"
                              xmlns="http://www.w3.org/2000/svg"
