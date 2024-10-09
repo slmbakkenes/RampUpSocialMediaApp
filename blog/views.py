@@ -1,9 +1,8 @@
 from blog.forms import ProfileForm
-from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
+from blog.models import Post, Comment, User, Profile, Category, CategoryPost, LikePost
 from blog.models import Follow as FollowModel
 from forms.post_form import PostForm
 from forms.user_create_form import UserCreationForm
-from django.http import HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.urls import reverse
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView, RedirectView
