@@ -18,8 +18,17 @@ class HomeView(LoginRequiredMixin, TemplateView):
 # Sign-up view for creating a new user
 class SignUpView(CreateView):
     form_class = UserCreationForm
-    success_url = reverse_lazy("login")
+    # success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        error_message(self, form)
+        return response
+
+    def get_success_url(self):
+        success_message(self)
+        return reverse_lazy("login")
 
 # View for the "For You" page showing posts from followed users
 class ForYouPageView(LoginRequiredMixin, ListView):
@@ -64,13 +73,18 @@ class PostCreationView(LoginRequiredMixin, CreateView):
             CategoryPost.objects.create(post=self.object, category=category)
         return response
 
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        error_message(self, form)
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         return context
 
     def get_success_url(self):
-        messages.error(self.request, "Successfully created post!")
+        success_message(self)
         # Redirect to the user's profile using the username
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
@@ -96,6 +110,7 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
 
     def get_success_url(self):
+        success_message(self)
         return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
 
     def dispatch(self, request, *args, **kwargs):
@@ -119,3 +134,31 @@ def profile_view(request, username):
             return redirect('profile', username=user.username)
 
     return render(request, 'profile/profile.html', {'user': user, 'profile': profile, 'posts': posts})
+
+# Method to take an invalid form and pass an error message
+def error_message(self, form):
+    message = ""
+    for key, value in form.errors.items():
+        for item in value:
+            message += f"{key.capitalize()}: "
+            message += f"{item}\n"
+    messages.error(self.request, message)
+
+# Method to take an invalid form and pass a success message
+def success_message(self):
+    type_of_request = ""
+    if self.form_class.__name__.lower().__contains__("delete"):
+        type_of_request += "deleted"
+    elif self.form_class.__name__.lower().__contains__("update"):
+        type_of_request += "updated"
+    elif self.form_class.__name__.lower().__contains__("create"):
+        type_of_request += "created"
+    message = f"Successfully created {self.form_class.Meta.model.__name__}!"
+    messages.success(self.request, message)
+
+# Method to take an invalid form and pass an info message
+def info_message(self, message):
+    try:
+        messages.info(self.request, message)
+    except AttributeError:
+        messages.info(self, message)

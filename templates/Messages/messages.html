@@ -1,12 +1,14 @@
 {% if messages %}
     {% for message in messages %}
         <div id="popup-{{ forloop.counter }}" tabindex="-1"
-             class="flex flex-col overflow-y-auto overflow-x-hidden sm:ml-64 pt-[4.5rem] fixed top-0 right-0 left-0 z-50 max-w-screen h-modal h-full justify-end">
-            <div class="space-y-5 w-full p-4">
-                {% if message.level == 25 %}
-                    
+             class="flex flex-col overflow-y-auto overflow-x-hidden sm:ml-64 fixed bottom-0 right-0 left-0 z-50 max-w-screen h-modal justify-end">
+            <div class="space-y-5 w-full p-4 z-50">
+                {% if message.level == 20 %}
+                    {% include 'Messages/Message types/info.html' %}
+                {% elif message.level == 25 %}
+                    {% include 'Messages/Message types/succes.html' %}
                 {% elif message.level == 40 %}
-                    
+                    {% include 'Messages/Message types/error.html' %}
                 {% endif %}
             </div>
         </div>
