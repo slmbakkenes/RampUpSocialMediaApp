@@ -13,14 +13,10 @@ from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+
 # Home view that requires login
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
-    login_url = 'login'  # Redirect to login if not authenticated
-
-# View for all followers posts
-class FollowersView(LoginRequiredMixin, TemplateView):
-    template_name = 'followers.html'
     login_url = 'login'  # Redirect to login if not authenticated
 
 # Class-based view for following a user
@@ -58,12 +54,12 @@ class Unfollow(LoginRequiredMixin, RedirectView):
         return reverse('profile', kwargs={'username': user_to_unfollow.username})
 
 
-
 # Sign-up view for creating a new user
 class SignUpView(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
+
 
 # View for the "For You" page showing posts from followed users
 class ForYouPageView(LoginRequiredMixin, ListView):
@@ -83,8 +79,6 @@ class ForYouPageView(LoginRequiredMixin, ListView):
         if categories:
             queryset = queryset.filter(categorypost__category__id__in=categories).distinct()
 
-
-
         return queryset.order_by("-created_at")
 
     def get_context_data(self, **kwargs):
@@ -93,7 +87,10 @@ class ForYouPageView(LoginRequiredMixin, ListView):
         context['categoryPosts'] = CategoryPost.objects.all()
         context['categories'] = Category.objects.all()
         context['checked'] = self.request.GET.getlist('categories')
+        liked_posts = LikePost.objects.filter(user=self.request.user).values_list('post_id', flat=True)
+        context['liked_posts'] = liked_posts
         return context
+
 
 # View for creating a new post
 class PostCreationView(LoginRequiredMixin, CreateView):
@@ -117,11 +114,13 @@ class PostCreationView(LoginRequiredMixin, CreateView):
         # Redirect to the user's profile using the username
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
+
 # View for listing all posts
 class ListPostsView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'list_posts.html'
     paginate_by = 15  # You can adjust this as needed
+
 
 # View for updating a post
 class PostUpdateView(LoginRequiredMixin, UpdateView):
@@ -131,6 +130,7 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+
 
 # View for deleting a post
 @login_required
@@ -147,6 +147,39 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
             return HttpResponseForbidden()  # Prevent unauthorized deletions
         return super().dispatch(request, *args, **kwargs)
 
+
+class LikePostView(LoginRequiredMixin, TemplateView):
+    def post(self, request, *args, **kwargs):
+        # Ensure the request is an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            post_id = request.POST.get('post_id')  # Get the post ID from the request
+            post = get_object_or_404(Post, id=post_id)  # Fetch the post object
+            liked = False  # Track if the post is liked or unliked
+
+            # Check if the post has already been liked by this user
+            like = LikePost.objects.filter(post=post, user=request.user).first()
+
+            if like:
+                # If already liked, unlike it
+                like.delete()
+                post.no_of_likes -= 1
+                post.save()  # Save the updated like count
+            else:
+                # If not liked, create a new like
+                new_like = LikePost(post=post, user=request.user)
+                new_like.save()
+                post.no_of_likes += 1
+                post.save()  # Save the updated like count
+                liked = True
+
+            # Return a JSON response with the updated like status and like count
+            return JsonResponse({
+                'liked': liked,
+                'no_of_likes': post.no_of_likes,
+            })
+
+        # If it's not a valid AJAX request, return an error
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User

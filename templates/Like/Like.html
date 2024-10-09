@@ -1,0 +1,59 @@
+{% block content %}
+    <div class="flex items-center justify-between mt-2">
+        <form class="like-form flex items-center" data-post-id="{{ post.id }}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="px-3 py-2 bg-transparent text-white flex items-center">
+                {% if post.id in liked_posts %}
+                    <i class="fas fa-thumbs-up text-white text-2xl"></i>
+                {% else %}
+                    <i class="far fa-thumbs-up text-white text-2xl"></i>
+                {% endif %}
+                <span class="ml-2">{{ post.no_of_likes }}</span>
+            </button>
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Handle the like button click event
+            $('.like-form').submit(function (e) {
+                e.preventDefault();  // Prevent default form submission
+
+                const form = $(this);  // Get the current form
+                const post_id = form.data('post-id');  // Get the post_id from the data attribute
+                const csrf_token = form.find('input[name="csrfmiddlewaretoken"]').val();  // Get CSRF token
+
+                // Start AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'ajax_like_post' %}",  // Django URL for the like/unlike action
+                    data: {
+                        'post_id': post_id,
+                        'csrfmiddlewaretoken': csrf_token,
+                    },
+                    success: function (response) {
+                        // Process the response: Update the button icon and number of likes
+                        const likeButton = form.find('button');
+                        const icon = likeButton.find('i');  // Get the icon inside the button
+                        const likesCount = likeButton.find('span');  // Get the span with the number of likes
+
+                        if (response.liked) {
+                            // If the post is liked, show the filled thumbs-up icon
+                            icon.attr('class', 'fas fa-thumbs-up text-white text-2xl');
+                        } else {
+                            // If the post is unliked, show the outlined thumbs-up icon
+                            icon.attr('class', 'far fa-thumbs-up text-white text-2xl');
+                        }
+
+                        // Update the number of likes next to the icon
+                        likesCount.text(response.no_of_likes);
+                    },
+                    error: function (response) {
+                        console.error('Error:', response);  // Log any errors
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
