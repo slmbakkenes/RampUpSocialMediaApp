@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
 from forms.post_form import PostForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Home view that requires login
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -103,19 +104,43 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
+
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'profile/profile.html'
     context_object_name = 'user'
 
     def get_object(self, queryset=None):
+        # Get the user based on the username in the URL
         return get_object_or_404(User, username=self.kwargs['username'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
+
+        # Get the profile of the user
         context['profile'] = get_object_or_404(Profile, user=user)
-        context['posts'] = Post.objects.filter(user=user)
+        context['self'] = self.request.user
+
+        # Get all posts of the user
+        posts = Post.objects.filter(user=user).order_by('-created_at')
+
+        # Pagination setup
+        paginator = Paginator(posts, 15)  # Show 15 posts per page
+        page = self.request.GET.get('page')  # Get the page number from the request
+
+        try:
+            paginated_posts = paginator.page(page)
+        except PageNotAnInteger:
+            paginated_posts = paginator.page(1)  # If page is not an integer, deliver the first page
+        except EmptyPage:
+            paginated_posts = paginator.page(paginator.num_pages)  # If page is out of range, deliver the last page
+
+        # Add paginated posts and pagination object to the context
+        context['posts'] = paginated_posts
+        context['page_obj'] = paginated_posts  # Add page_obj to maintain consistency with other views
+        context['is_paginated'] = paginated_posts.has_other_pages()  # Flag to indicate if pagination is needed
+
         return context
 
 
