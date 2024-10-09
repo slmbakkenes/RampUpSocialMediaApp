@@ -3,16 +3,16 @@
 
 {% block content %}
     <div class="flex items-center justify-center min-h-screen">
-        <div class="max-w-md w-full bg-white shadow-md rounded-lg p-6">
-            <!-- Added styling for background, shadow, and padding -->
-            <h1 class="text-2xl font-bold text-center mb-5">Create a Post</h1>
+        <div class="max-w-md w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
+            <h1 class="text-2xl font-bold text-center mb-5 text-white">Create a Post</h1> <!-- Changed text color to white -->
 
             <form method="POST" enctype="multipart/form-data" class="mb-4">
                 {% csrf_token %}
+                
                 <!-- Category Field -->
                 <div class="flex items-center justify-center py-4">
                     <button id="dropdownDefault" data-dropdown-toggle="dropdown"
-                            class="w-full text-white justify-center bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                            class="w-full text-white justify-center bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center"
                             type="button">
                         Select Categories
                         <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor"
@@ -51,20 +51,16 @@
 
                 <!-- Caption Field -->
                 <div class="mb-5">
-                    <label for="caption" class="block mb-2 text-sm font-medium text-black">Caption:</label>
-                    <!-- Label styling -->
+                    <label for="caption" class="block mb-2 text-sm font-medium text-gray-300">Caption:</label> <!-- Changed label text color -->
                     <textarea id="caption" name="caption" rows="4"
-                              class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
-                    <!-- Textarea styling -->
+                              class="shadow-sm bg-gray-700 border border-gray-600 text-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"></textarea> <!-- Adjusted background and text color -->
                 </div>
 
                 <!-- Image Upload Field -->
                 <div class="mb-5">
-                    <label for="image" class="block mb-2 text-sm font-medium text-black">Image (optional):</label>
-                    <!-- Label styling -->
+                    <label for="image" class="block mb-2 text-sm font-medium text-gray-300">Image (optional):</label> <!-- Changed label text color -->
                     <input type="file" id="image" name="image"
-                           class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"/>
-                    <!-- Input styling -->
+                           class="block w-full text-sm text-gray-300 border border-gray-600 rounded-lg cursor-pointer bg-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"/> <!-- Adjusted background and text color -->
                 </div>
 
                 <!-- Submit Button -->

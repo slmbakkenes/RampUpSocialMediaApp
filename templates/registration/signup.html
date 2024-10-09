@@ -5,33 +5,33 @@
 
 {% block content %}
 <div class="flex items-center justify-center min-h-screen">
-    <div class="max-w-sm w-full bg-white shadow-md rounded-lg p-6"> <!-- Added background and padding -->
-        <h2 class="text-2xl font-bold text-center mb-5">Sign up</h2>
+    <div class="max-w-sm w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
+        <h2 class="text-2xl font-bold text-center mb-5 text-white">Sign up</h2> <!-- Text color changed to white -->
         <form method="post" class="mb-4">
             {% csrf_token %}
 
             <!-- Username Field -->
             <div class="mb-5">
-                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your username</label> <!-- Changed to text-black -->
-                {{ form.username|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Your username</label> <!-- Changed to text-white -->
+                {{ form.username|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Email Field -->
             <div class="mb-5">
-                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your email</label> <!-- Changed to text-black -->
-                {{ form.email|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Your email</label> <!-- Changed to text-white -->
+                {{ form.email|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Password Field -->
             <div class="mb-5">
-                <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Your password</label> <!-- Changed to text-black -->
-                {{ form.password1|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.password1.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Your password</label> <!-- Changed to text-white -->
+                {{ form.password1|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Confirm Password Field -->
             <div class="mb-5">
-                <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-black">Repeat password</label> <!-- Changed to text-black -->
-                {{ form.password2|add_class:"shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" }}
+                <label for="{{ form.password2.id_for_label }}" class="block mb-2 text-sm font-medium text-white">Repeat password</label> <!-- Changed to text-white -->
+                {{ form.password2|add_class:"shadow-sm bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" }}
             </div>
 
             <!-- Terms and Conditions -->
@@ -39,14 +39,75 @@
                 <div class="flex items-center h-5">
                     <input id="terms" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
                 </div>
-                <label for="terms" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">I agree with the <a href="#" class="text-blue-600 hover:underline dark:text-blue-500">terms and conditions</a></label>
+                <label for="terms" class="ms-2 text-sm font-medium text-white"> <!-- Changed to text-white -->
+                    I agree with the
+                    <a href="#" id="openTerms" class="text-[#FFA500] hover:underline">terms and conditions</a> <!-- Changed link color to orange -->
+                </label>
             </div>
 
             <!-- Submit Button -->
-            <div class="flex justify-center"> <!-- Center the button -->
+            <div class="flex justify-center">
                 <button type="submit" class="text-black bg-[#60A9B4] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Register new account</button>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Modal -->
+<div id="termsModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg p-6 max-w-lg mx-auto overflow-y-auto max-h-[80vh]">
+        <h3 class="text-xl font-bold mb-4">Terms and Conditions</h3>
+        <p class="mb-4">
+            Welcome to our application! By using our service, you agree to the following terms and conditions:
+        </p>
+        
+        <h4 class="font-semibold">1. Acceptance of Terms</h4>
+        <p class="mb-4">
+            By accessing and using this application, you accept and agree to be bound by these terms. If you do not agree to these terms, please do not use our service.
+        </p>
+
+        <h4 class="font-semibold">2. User Accounts</h4>
+        <p class="mb-4">
+            You are responsible for maintaining the confidentiality of your account information and for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account or any other breach of security.
+        </p>
+
+        <h4 class="font-semibold">3. User Conduct</h4>
+        <p class="mb-4">
+            You agree to use the application only for lawful purposes and in a manner that does not infringe the rights of, restrict, or inhibit anyone else's use and enjoyment of the application.
+        </p>
+
+        <h4 class="font-semibold">4. Changes to the Terms</h4>
+        <p class="mb-4">
+            We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting on this application. Your continued use of the application after changes are made will constitute your acceptance of the new terms.
+        </p>
+
+        <h4 class="font-semibold">5. Limitation of Liability</h4>
+        <p class="mb-4">
+            To the fullest extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the application.
+        </p>
+
+        <h4 class="font-semibold">6. Governing Law</h4>
+        <p class="mb-4">
+            These terms shall be governed by and construed in accordance with the laws of the jurisdiction in which we operate, without regard to its conflict of law principles.
+        </p>
+
+        <h4 class="font-semibold">7. Contact Information</h4>
+        <p class="mb-4">
+            If you have any questions about these terms, please contact us at support@example.com.
+        </p>
+
+        <button id="closeModal" class="text-black bg-[#60A9B4] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">Close</button>
+    </div>
+</div>
+    
+<script>
+    document.getElementById('openTerms').addEventListener('click', function (event) {
+        event.preventDefault();
+        document.getElementById('termsModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeModal').addEventListener('click', function () {
+        document.getElementById('termsModal').classList.add('hidden');
+    });
+</script>
 {% endblock %}

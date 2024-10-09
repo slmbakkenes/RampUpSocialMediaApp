@@ -1,0 +1,26 @@
+{% extends '_base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="max-w-lg w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
+            <h1 class="text-2xl font-bold text-center text-white">Update {{ user.username }}'s Profile</h1> <!-- Changed text color to white -->
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="profile_img" class="block text-sm font-medium text-gray-300">Profile Picture</label> <!-- Changed text color to gray-300 -->
+                    <input type="file" id="profile_img" name="profile_img"
+                           class="block w-full text-sm text-gray-500 mt-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500"> <!-- Added background and border styles -->
+                </div>
+                <div class="mb-4">
+                    <label for="bio" class="block text-sm font-medium text-gray-300">Bio</label> <!-- Changed text color to gray-300 -->
+                    <textarea id="bio" name="bio" rows="3" class="block w-full text-sm text-gray-500 mt-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500">{{ profile.bio }}</textarea> <!-- Added background and border styles -->
+                </div>
+                <button type="submit" class="bg-[#60A9B4] hover:bg-blue-800 text-black font-bold py-2 px-4 rounded"> <!-- Adjusted button color -->
+                    Update Profile
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
