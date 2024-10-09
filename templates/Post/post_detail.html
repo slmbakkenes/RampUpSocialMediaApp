@@ -1,0 +1,79 @@
+{% extends '_base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<a class="border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+    <!-- User Info Section -->
+    <div class="basis-1/4 lg:basis-1/6 flex flex-row justify-between items-center mb-1">
+        <div class="flex flex-col h-full">
+            <div onclick="location.href='{% url 'profile' post.user.username %}'" class="cursor-pointer grow flex flex-row items-center">
+                <img class="w-1/12 h-auto aspect-square rounded-full object-cover"
+                     src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
+                     alt="User Image">
+                <h4 class="mx-4 text-lg font-semibold text-gray-900 dark:text-white">{{ post.user.username }}</h4>
+            </div>
+            <div class="flex grow items-center mt-1">
+                <p class="text-lg dark:text-white me-2">Categories:</p>
+                {% for categoryPost in categoryPosts %}
+                    {% if categoryPost.post.id == post.id %}
+                        <div class="text-xs p-1 md:text-base lg:text-lg rounded bg-blue-100 m-1 ms-0">
+                            {{ categoryPost.category.category_name }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <button class="min-w-fit justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white">
+            Report
+        </button>
+    </div>
+
+    <!-- Post Info Section -->
+    <div class="flex md:flex-row flex-col basis-3/4 lg:basis-5/6 w-auto flex-grow h-full" id="post info">
+        <!-- Post Image and Title -->
+        <div class="basis-2/2 h-full flex flex-col md:mr-4">
+            <img onclick="location.href='{% url 'post_detail' post.id %}'" class="cursor-pointer min-h-0 grow max-h-full object-cover rounded-lg"
+                    {% if post.image %}
+                 src="{{ post.image.url }}"
+                    {% else %}
+                 src="/media/post_images/blank-post-picture.png"
+                    {% endif %}
+                 alt="Post Image">
+                {% include 'Like/Like.html' %}
+            <h2 onclick="location.href='{% url 'post_detail' post.id %}'" class="cursor-pointer min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
+        </div>
+
+
+    </div>
+
+</a>
+        <!-- Comments Section -->
+        <div class="h-full flex flex-col md:ml-4 overflow-y-auto object-scale-down md:max-h-full max-h-48"
+             id="comments">
+            <div class="h-full text-gray-700 dark:text-gray-400 relative">
+                <ol class="h-full relative">
+                    {% for comment in comments %}
+                        {% if post.id == comment.post.id %}  <!-- Fixed to use `post.id` -->
+                            <li class="relative flex flex-row grow content-center items-center pb-10">
+                                <div class="z-0 absolute top-0 bottom-0 inset-9 w-1 border-s border-gray-200 dark:border-gray-700 text-transparent"></div>
+                                <div class="aspect-square object-scale-down z-10 flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full ring-8 ring-white mx-6 dark:ring-gray-900 dark:bg-blue-900">
+                                    <img class="rounded-full shadow-lg"
+                                         src="/media/blank-profile-picture.png"
+                                         alt="Profile picture"/>
+                                </div>
+                                <div class="grow items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:bg-gray-700 dark:border-gray-600">
+                                    <time class="mb-1 text-xs font-normal text-gray-400">
+                                        {{ comment.comment_date }}
+                                    </time>
+                                    <div class="text-sm font-normal text-gray-500 dark:text-gray-300">
+                                        {{ comment.comment }}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+
+{% endblock %}

@@ -1,9 +1,9 @@
 from blog.forms import ProfileForm
-from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
+from blog.models import LikePost, Post, Comment, Follow, User, Profile, Category, CategoryPost
 from blog.models import Follow as FollowModel
 from forms.post_form import PostForm
 from forms.user_create_form import UserCreationForm
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.urls import reverse_lazy
 from django.urls import reverse
 from django.views.generic import CreateView, ListView, TemplateView, UpdateView, DeleteView, DetailView, RedirectView
@@ -121,6 +121,24 @@ class ListPostsView(LoginRequiredMixin, ListView):
     template_name = 'list_posts.html'
     paginate_by = 15  # You can adjust this as needed
 
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'post/post_detail.html'
+    context_object_name = 'post'
+
+    def get_object(self):
+        # Fetch the post by its UUID (from the URL)
+        return get_object_or_404(Post, id=self.kwargs['id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+
+        # Pass related data to the template (e.g., comments)
+        context['comments'] = Comment.objects.filter(post=post).order_by('-comment_date')
+
+        # If you want, you can add more data to the context here (e.g., likes)
+        return context
 
 # View for updating a post
 class PostUpdateView(LoginRequiredMixin, UpdateView):

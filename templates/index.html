@@ -58,13 +58,11 @@
     </form>
 
     {% for post in page_obj %}
-        <a href="#"
-           class="border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-
+        <a class="border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
             <!-- User Info Section -->
             <div class="basis-1/4 lg:basis-1/6 flex flex-row justify-between items-center mb-1">
                 <div class="flex flex-col h-full">
-                    <div onclick="location.href='{% url 'profile' post.user.username %}'" class="grow flex flex-row items-center">
+                    <div onclick="location.href='{% url 'profile' post.user.username %}'" class="cursor-pointer grow flex flex-row items-center">
                         <img class="w-1/12 h-auto aspect-square rounded-full object-cover"
                              src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
                              alt="User Image">
@@ -90,7 +88,7 @@
             <div class="flex md:flex-row flex-col basis-3/4 lg:basis-5/6 w-auto flex-grow h-full" id="post info">
                 <!-- Post Image and Title -->
                 <div class="basis-1/2 h-full flex flex-col md:mr-4">
-                    <img class="min-h-0 grow max-h-full object-cover rounded-lg"
+                    <img onclick="location.href='{% url 'post_detail' post.id %}'" class="cursor-pointer min-h-0 grow max-h-full object-cover rounded-lg"
                             {% if post.image %}
                          src="{{ post.image.url }}"
                             {% else %}
@@ -98,7 +96,7 @@
                             {% endif %}
                          alt="Post Image">
                         {% include 'Like/Like.html' %}
-                    <h2 class="min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
+                    <h2 onclick="location.href='{% url 'post_detail' post.id %}'" class="cursor-pointer min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
                 </div>
 
                 <!-- Comments Section -->
