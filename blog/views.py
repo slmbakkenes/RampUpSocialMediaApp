@@ -1,3 +1,5 @@
+from django.contrib import messages
+
 from blog.forms import ProfileForm
 from blog.models import Post, Comment, User, Profile, Category, CategoryPost, LikePost
 from blog.models import Follow as FollowModel
@@ -25,7 +27,7 @@ class Follow(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         # Get the user to be followed
         user_to_follow = get_object_or_404(User, username=kwargs['username'])
-        
+
         # Check if the logged-in user is not already following the user
         if not FollowModel.objects.filter(follower=self.request.user, following=user_to_follow).exists():
             # Create the follow relationship
@@ -42,7 +44,7 @@ class Unfollow(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         # Get the user to be unfollowed
         user_to_unfollow = get_object_or_404(User, username=kwargs['username'])
-        
+
         # Check if the logged-in user is following the user
         follow_relation = FollowModel.objects.filter(follower=self.request.user, following=user_to_unfollow)
         if follow_relation.exists():
@@ -56,9 +58,16 @@ class Unfollow(LoginRequiredMixin, RedirectView):
 # Sign-up view for creating a new user
 class SignUpView(CreateView):
     form_class = UserCreationForm
-    success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        error_message(self, form)
+        return response
+
+    def get_success_url(self):
+        success_message(self)
+        return reverse_lazy("login")
 
 # View for the "For You" page showing posts from followed users
 class ForYouPageView(LoginRequiredMixin, ListView):
@@ -90,7 +99,6 @@ class ForYouPageView(LoginRequiredMixin, ListView):
         context['liked_posts'] = liked_posts
         return context
 
-
 # View for creating a new post
 class PostCreationView(LoginRequiredMixin, CreateView):
     form_class = PostForm
@@ -104,22 +112,26 @@ class PostCreationView(LoginRequiredMixin, CreateView):
             CategoryPost.objects.create(post=self.object, category=category)
         return response
 
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        error_message(self, form)
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         return context
 
     def get_success_url(self):
+        success_message(self)
         # Redirect to the user's profile using the username
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
-
 
 # View for listing all posts
 class ListPostsView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'list_posts.html'
     paginate_by = 15  # You can adjust this as needed
-
 
 # View for updating a post
 class PostUpdateView(LoginRequiredMixin, UpdateView):
@@ -130,7 +142,6 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
 
-
 # View for deleting a post
 @login_required
 class PostDeleteView(LoginRequiredMixin, DeleteView):
@@ -138,6 +149,7 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'confirm_delete.html'
 
     def get_success_url(self):
+        success_message(self)
         return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
 
     def dispatch(self, request, *args, **kwargs):
@@ -234,4 +246,33 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         profile = form.save(commit=False)
         profile.save()
+        success_message(self)
         return redirect('profile', username=self.kwargs['username'])
+
+# Method to take an invalid form and pass an error message
+def error_message(self, form):
+    message = ""
+    for key, value in form.errors.items():
+        for item in value:
+            message += f"{key.capitalize()}: "
+            message += f"{item}\n"
+    messages.error(self.request, message)
+
+# Method to take an invalid form and pass a success message
+def success_message(self):
+    type_of_request = ""
+    if self.form_class.__name__.lower().__contains__("delete"):
+        type_of_request += "deleted"
+    elif self.form_class.__name__.lower().__contains__("update"):
+        type_of_request += "updated"
+    elif self.form_class.__name__.lower().__contains__("create"):
+        type_of_request += "created"
+    message = f"Successfully created {self.form_class.Meta.model.__name__}!"
+    messages.success(self.request, message)
+
+# Method to take an invalid form and pass an info message
+def info_message(self, message):
+    try:
+        messages.info(self.request, message)
+    except AttributeError:
+        messages.info(self, message)
