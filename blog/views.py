@@ -198,13 +198,20 @@ class ReportPostView(LoginRequiredMixin, TemplateView):
             post_id = request.POST.get('post_id')  # Get the post ID from the AJAX request
             post = get_object_or_404(Post, id=post_id)
 
-            # Add a report and check if the post should be soft-deleted
-            post.total_reports += 1  # Assuming 'total_reports' was renamed correctly
+            # Check if the user has already reported this post
+            if request.user in post.reported_by.all():
+                return JsonResponse({'error': 'You have already reported this post.'}, status=400)
+
+            # Add the user to the reported_by field and increase the report count
+            post.reported_by.add(request.user)
+            post.total_reports += 1
+
+            # If the total reports reach 5, soft-delete the post
             if post.total_reports >= 5:
-                post.is_deleted = True  # Soft-delete the post
+                post.is_deleted = True
+
             post.save()
 
-            # Send a JSON response with the updated status
             return JsonResponse({
                 'total_reports': post.total_reports,
                 'is_deleted': post.is_deleted,

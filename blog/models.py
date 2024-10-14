@@ -22,6 +22,7 @@ class Post(models.Model):
     no_of_likes = models.IntegerField(default=0)
     total_reports = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
+    reported_by = models.ManyToManyField(User, related_name='reported_posts', blank=True)
 
     def __str__(self):
         return str(self.id)
