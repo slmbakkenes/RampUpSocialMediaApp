@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
 from forms.post_form import PostForm
+from forms.comment_form import CommentForm
 
 # Home view that requires login
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -147,5 +148,26 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         if comment.user != request.user:
             return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
         return super().dispatch(request, *args, **kwargs)
+
+class CommentCreationView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'comments/add_comment.html'  # Maak deze template aan voor het toevoegen van opmerkingen
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post
+        form.instance.user = self.request.user  # Koppel de gebruiker aan de opmerking
+        form.instance.post = post  # Koppel de opmerking aan de post
+        response = super().form_valid(form)  # Verwerk het formulier en sla de opmerking op
+        return response  # Geef de response terug na succesvolle validatie
+
+    def get_success_url(self):
+        # Redirect naar de detailpagina van de post na succesvol toevoegen van een commentaar
+        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post om deze in de context te kunnen gebruiken
+        return context
 
 

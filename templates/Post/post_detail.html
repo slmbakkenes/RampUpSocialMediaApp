@@ -47,6 +47,17 @@
 
 <!-- Comments Section -->  
 <div class="h-full flex flex-col md:ml-4 overflow-y-auto object-scale-down md:max-h-full max-h-48" id="comments">  
+    <!-- Comment Form Section -->  
+    <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-700 dark:border-gray-600 mb-4">  
+        <form action="{% url 'add_comment' post.id %}" method="post">  
+            {% csrf_token %}  
+            <textarea name="comment" rows="3" class="w-full border rounded-md p-2" placeholder="Schrijf je commentaar hier..."></textarea>  
+            <button type="submit" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">  
+                Plaats Commentaar  
+            </button>  
+        </form>  
+    </div>  
+
     <div class="h-full text-gray-700 dark:text-gray-400 relative">  
         <ol class="h-full relative">  
             {% for comment in comments %}  
@@ -61,7 +72,8 @@
                                 {{ comment.comment_date }}  
                             </time>  
                             <div class="text-sm font-normal text-gray-500 dark:text-gray-300">  
-                                {{ comment.comment }}  
+                                <strong>{{ comment.user.username }}</strong> <!-- Laat de username van de commentaargever zien -->  
+                                : {{ comment.comment }}  
                             </div>  
                             {% if comment.user == request.user or comment.post.user == request.user %} <!-- Check if the logged-in user is the comment owner -->  
                                 <form action="{% url 'comment_delete' comment.id %}" method="post">  
@@ -77,6 +89,6 @@
             {% endfor %}  
         </ol>  
     </div>  
-</div>  
+</div> 
 
 {% endblock %}

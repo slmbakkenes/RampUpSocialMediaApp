@@ -28,7 +28,8 @@ from blog.views import (
     PostDeleteView,
     ProfileDetailView,
     ProfileUpdateView,
-    CommentDeleteView
+    CommentDeleteView,
+    CommentCreationView
 )
 
 urlpatterns = [
@@ -52,6 +53,7 @@ urlpatterns = [
 
     # Comment management
     path('comment/delete/<uuid:uuid>/', CommentDeleteView.as_view(), name='comment_delete'),
+    path('post/<int:post_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),  # URL voor het toevoegen van een comment
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
