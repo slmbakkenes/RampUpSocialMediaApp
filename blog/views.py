@@ -180,6 +180,26 @@ class LikePostView(LoginRequiredMixin, TemplateView):
         # If it's not a valid AJAX request, return an error
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
+class ReportPostView(LoginRequiredMixin, TemplateView):
+    def post(self, request, *args, **kwargs):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            post_id = request.POST.get('post_id')  # Get the post ID from the AJAX request
+            post = get_object_or_404(Post, id=post_id)
+
+            # Add a report and check if the post should be soft-deleted
+            post.total_reports += 1  # Assuming 'total_reports' was renamed correctly
+            if post.total_reports >= 5:
+                post.is_deleted = True  # Soft-delete the post
+            post.save()
+
+            # Send a JSON response with the updated status
+            return JsonResponse({
+                'total_reports': post.total_reports,
+                'is_deleted': post.is_deleted,
+            })
+
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'profile/profile.html'

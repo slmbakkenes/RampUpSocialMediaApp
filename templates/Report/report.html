@@ -1,0 +1,36 @@
+<!-- Report Button Template -->
+<button class="min-w-fit justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
+        onclick="reportPost('{{ post.id }}')">
+    Report
+</button>
+
+<script>
+function reportPost(postId) {
+    // Confirmation dialog before submitting the report
+    const confirmReport = confirm("Are you sure you want to report this post?");
+
+    if (confirmReport) {
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'report_post' post_id=post.id %}",  <!-- Correct URL generation -->
+            data: {
+                'post_id': postId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.is_deleted) {
+                    // Hide the post when it's soft-deleted
+                    $('#post-' + postId).hide();
+                } else {
+                    alert("Report submitted. Total reports: " + response.total_reports);
+                }
+            },
+            error: function(response) {
+                console.log('Error reporting post:', response);
+            }
+        });
+    } else {
+        console.log("Report cancelled");
+    }
+}
+</script>
