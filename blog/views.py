@@ -137,7 +137,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
-    template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
+    template_name = 'post/post_detail.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
 
     def get_success_url(self):
         # Redirect naar de detailpagina van de post na succesvolle verwijdering
@@ -152,7 +152,7 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 class CommentCreationView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
-    template_name = 'comments/add_comment.html'  # Maak deze template aan voor het toevoegen van opmerkingen
+    template_name = 'post/post_detail.html'  # Maak deze template aan voor het toevoegen van opmerkingen
 
     def form_valid(self, form):
         post = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post
@@ -169,5 +169,19 @@ class CommentCreationView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['post'] = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post om deze in de context te kunnen gebruiken
         return context
+
+class EditCommentView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'post/post_detail.html'  # Hier stellen we de juiste template in voor bewerken
+
+    def dispatch(self, request, *args, **kwargs):
+        comment = self.get_object()
+        if comment.user != request.user:
+            return HttpResponseForbidden()  # Voorkom ongeautoriseerde bewerkingen
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
 
 

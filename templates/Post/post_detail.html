@@ -82,7 +82,31 @@
                                         Delete  
                                     </button>  
                                 </form>  
-                            {% endif %}  
+                            {% endif %}
+                            {% for comment in post.comments.all %}  
+                            <div>  
+                                <p>{{ comment.user.username }}: {{ comment.comment }}</p>  
+                                
+                                <!-- Verwijder functionaliteit -->  
+                                {% if comment.user == request.user %}  
+                                    <form action="{% url 'comment_delete' comment.id %}" method="post">  
+                                        {% csrf_token %}  
+                                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700">  
+                                            Delete  
+                                        </button>  
+                                    </form>  
+                                {% endif %}  
+                                
+                                <!-- Bewerk functionaliteit -->  
+                                {% if comment.user == request.user %}  
+                                    <form action="{% url 'comment_edit' comment.id %}" method="get">  
+                                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700">  
+                                            Edit  
+                                        </button>  
+                                    </form>  
+                                {% endif %}  
+                            </div>  
+                            {% endfor %}
                         </div>  
                     </li>  
                 {% endif %}  

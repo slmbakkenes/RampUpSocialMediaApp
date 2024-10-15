@@ -29,7 +29,8 @@ from blog.views import (
     ProfileDetailView,
     ProfileUpdateView,
     CommentDeleteView,
-    CommentCreationView
+    CommentCreationView,
+    EditCommentView
 )
 
 urlpatterns = [
@@ -48,12 +49,13 @@ urlpatterns = [
     # Post management
     path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
     path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
-    path('update_post/<uuid:uuid>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
-    path('post/delete/<uuid:uuid>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
+    path('update_post/<uuid:post_id>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
+    path('post/delete/<uuid:post_id>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
 
     # Comment management
-    path('comment/delete/<uuid:uuid>/', CommentDeleteView.as_view(), name='comment_delete'),
-    path('post/<int:post_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),  # URL voor het toevoegen van een comment
+    path('comment/delete/<uuid:comment_id>/', CommentDeleteView.as_view(), name='comment_delete'),
+    path('post/<uuid:comment_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),  # URL voor het toevoegen van een comment
+    path('comment/<uuid:comment_id>/edit/', EditCommentView.as_view(), name='comment_edit'),  # Nieuwe edit URL
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
