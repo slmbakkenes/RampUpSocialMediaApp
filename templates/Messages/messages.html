@@ -1,0 +1,32 @@
+{% if messages %}
+    {% for message in messages %}
+        <div id="popup-{{ forloop.counter }}" tabindex="-1"
+             class="flex flex-col overflow-y-auto overflow-x-hidden sm:ml-64 fixed bottom-0 right-0 left-0 z-50 max-w-screen h-modal justify-end">
+            <div class="space-y-5 w-full p-4 z-50">
+                {% if message.level == 20 %}
+                    {% include 'Messages/Message types/info.html' %}
+                {% elif message.level == 25 %}
+                    {% include 'Messages/Message types/succes.html' %}
+                {% elif message.level == 40 %}
+                    {% include 'Messages/Message types/error.html' %}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+<script>
+    document.querySelectorAll('.close-modal').forEach((button, index) => {
+        const modalEl = document.getElementById(`popup-${index + 1}`);
+        const modal = new Modal(modalEl, {
+            placement: 'bottom-right',
+            backdropClasses: 'no-shadow',
+            closable: false,
+        });
+
+        modal.show();
+
+        button.addEventListener('click', function () {
+            modal.hide();
+        });
+    });
+</script>

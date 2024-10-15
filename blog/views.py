@@ -1,4 +1,5 @@
 from blog.forms import ProfileForm
+from forms.comment_form import CommentForm
 from forms.user_create_form import UserCreationForm
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
@@ -8,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from blog.models import Post, Comment, Follow, User, Profile, Category, CategoryPost
 from forms.post_form import PostForm
-from forms.comment_form import CommentForm
 
 # Home view that requires login
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -88,11 +88,10 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
 
-
 # View for deleting a post
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
-    template_name = 'profile/profile.html'
+    template_name = 'confirm_delete.html'
 
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
@@ -134,7 +133,6 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         profile = form.save(commit=False)
         profile.save()
         return redirect('profile', username=self.kwargs['username'])
-
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = 'post/post_detail.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
@@ -183,5 +181,3 @@ class EditCommentView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
-
-

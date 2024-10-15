@@ -25,12 +25,12 @@ from blog.views import (
     PostCreationView,
     ListPostsView,
     PostUpdateView,
-    PostDeleteView,
     ProfileDetailView,
     ProfileUpdateView,
+    PostDeleteView,
     CommentDeleteView,
     CommentCreationView,
-    EditCommentView
+    EditCommentView,
 )
 
 urlpatterns = [
@@ -43,19 +43,19 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
 
     # Main views
-    path('', ForYouPageView.as_view(), name='foryoupage'),  # For You page
-    path('foryoupage/', ForYouPageView.as_view(), name='foryoupage_redirect'),  # Redirect to For You page
+    path('', ForYouPageView.as_view(), name='foryoupage'),
+    path('foryoupage/', ForYouPageView.as_view(), name='foryoupage_redirect'),
 
     # Post management
-    path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
-    path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
-    path('update_post/<uuid:post_id>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
-    path('post/delete/<uuid:post_id>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
+    path('create_post/', PostCreationView.as_view(), name='create_post'),
+    path('posts/', ListPostsView.as_view(), name='list_posts'),
+    path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),
+    path('post/delete/<uuid:post_id>/', PostDeleteView.as_view(), name='post_delete'),
 
     # Comment management
     path('comment/delete/<uuid:comment_id>/', CommentDeleteView.as_view(), name='comment_delete'),
-    path('post/<uuid:comment_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),  # URL voor het toevoegen van een comment
-    path('comment/<uuid:comment_id>/edit/', EditCommentView.as_view(), name='comment_edit'),  # Nieuwe edit URL
+    path('post/<uuid:comment_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),
+    path('comment/<uuid:comment_id>/edit/', EditCommentView.as_view(), name='comment_edit'),
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
