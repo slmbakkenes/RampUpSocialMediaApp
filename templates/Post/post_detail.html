@@ -73,46 +73,46 @@
                             </time>  
                             <div class="text-sm font-normal text-gray-500 dark:text-gray-300">  
                                 <strong>{{ comment.user.username }}</strong> <!-- Laat de username van de commentaargever zien -->  
-                                : {{ comment.comment }}  
+                                <span class="comment-text" id="comment-text-{{ comment.id }}">{{ comment.comment }}</span> <!-- Laat de originele commentaar zien -->  
                             </div>  
-                            {% if comment.user == request.user or comment.post.user == request.user %} <!-- Check if the logged-in user is the comment owner -->  
-                                <form action="{% url 'comment_delete' comment.id %}" method="post">  
+
+                            {% if comment.user == request.user %} <!-- Check if the logged-in user is the comment owner -->  
+                                
+                                <!-- Bewerk functie -->  
+                                <button onclick="showEditForm({{ comment.id }})" class="inline-flex items-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700">  
+                                    Bijwerken  
+                                </button>  
+
+                                <!-- Bewerken formulier -->  
+                                <form id="edit-form-{{ comment.id }}" action="{% url 'comment_edit' comment.id %}" method="post" style="display:none;">  
+                                    {% csrf_token %}  
+                                    <textarea name="comment" rows="3" class="w-full border rounded-md p-2" placeholder="Bewerk je commentaar...">{{ comment.comment }}</textarea>  
+                                    <button type="submit" class="mt-2 inline-flex items-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700">  
+                                        Bijwerken  
+                                    </button>  
+                                </form>  
+
+                                <!-- Verwijder functionaliteit -->  
+                                <form action="{% url 'comment_delete' comment.id %}" method="post" class="inline">  
                                     {% csrf_token %}  
                                     <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700">  
                                         Delete  
                                     </button>  
                                 </form>  
-                            {% endif %}
-                            {% for comment in post.comments.all %}  
-                            <div>  
-                                <p>{{ comment.user.username }}: {{ comment.comment }}</p>  
-                                
-                                <!-- Verwijder functionaliteit -->  
-                                {% if comment.user == request.user %}  
-                                    <form action="{% url 'comment_delete' comment.id %}" method="post">  
-                                        {% csrf_token %}  
-                                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700">  
-                                            Delete  
-                                        </button>  
-                                    </form>  
-                                {% endif %}  
-                                
-                                <!-- Bewerk functionaliteit -->  
-                                {% if comment.user == request.user %}  
-                                    <form action="{% url 'comment_edit' comment.id %}" method="get">  
-                                        <button type="submit" class="inline-flex items-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700">  
-                                            Edit  
-                                        </button>  
-                                    </form>  
-                                {% endif %}  
-                            </div>  
-                            {% endfor %}
+                            {% endif %}  
                         </div>  
                     </li>  
                 {% endif %}  
             {% endfor %}  
         </ol>  
     </div>  
-</div> 
+</div>  
 
+<script>  
+    function showEditForm(commentId) {  
+        const form = document.getElementById('edit-form-' + commentId);  
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';  
+    }  
+</script>
+    
 {% endblock %}

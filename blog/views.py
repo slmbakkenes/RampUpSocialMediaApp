@@ -133,6 +133,8 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         profile = form.save(commit=False)
         profile.save()
         return redirect('profile', username=self.kwargs['username'])
+
+
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = 'post/post_detail.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
@@ -146,6 +148,7 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         if comment.user != request.user:
             return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
         return super().dispatch(request, *args, **kwargs)
+
 
 class CommentCreationView(LoginRequiredMixin, CreateView):
     model = Comment
@@ -167,6 +170,7 @@ class CommentCreationView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['post'] = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post om deze in de context te kunnen gebruiken
         return context
+
 
 class EditCommentView(LoginRequiredMixin, UpdateView):
     model = Comment
