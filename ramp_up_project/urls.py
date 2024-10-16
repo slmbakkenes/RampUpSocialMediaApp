@@ -14,6 +14,7 @@ from blog.views import (
     Unfollow,
     Follow,
     LikePostView,
+    ReportPostView,
 )
 
 urlpatterns = [
@@ -33,11 +34,12 @@ urlpatterns = [
     path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
     path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
     path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
+    path('post/<uuid:post_id>/report/', ReportPostView.as_view(), name='report_post'),
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
     path('profile/<str:username>/update/', ProfileUpdateView.as_view(), name='profile_update'),
-    
+
     # Followers
     path('follow/<str:username>/', Follow.as_view(), name='follow'),
     path('unfollow/<str:username>/', Unfollow.as_view(), name='unfollow'),
