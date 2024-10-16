@@ -140,14 +140,38 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     template_name = 'post/update_post.html'
 
+    def form_valid(self, form):
+        # Save the post object
+        post = form.save()
+
+        # Get the list of selected category IDs from the form
+        selected_categories_ids = self.request.POST.getlist('categories')
+
+        # Clear old categories linked to the post
+        CategoryPost.objects.filter(post=post).delete()
+
+        # Add new categories selected in the form
+        for category_id in selected_categories_ids:
+            category = get_object_or_404(Category, id=category_id)
+            CategoryPost.objects.create(post=post, category=category)
+
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Get all categories
         context['categories'] = Category.objects.all()
+
+        # Fetch the post instance
+        post = self.get_object()
+
+        # Get the selected categories linked to this post from the blog_categorypost table
+        context['selected_categories'] = CategoryPost.objects.filter(post=post).values_list('category_id', flat=True)
+
         return context
 
     def get_success_url(self, **kwargs):
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
-
 
 # View for deleting a post
 class PostDeleteView(LoginRequiredMixin, DeleteView):
