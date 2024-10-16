@@ -27,6 +27,10 @@ from blog.views import (
     PostUpdateView,
     ProfileDetailView,
     ProfileUpdateView,
+    Unfollow,
+    Follow,
+    LikePostView,
+    ReportPostView,
     PostDeleteView,
     CommentDeleteView,
     CommentCreationView,
@@ -47,9 +51,10 @@ urlpatterns = [
     path('foryoupage/', ForYouPageView.as_view(), name='foryoupage_redirect'),
 
     # Post management
-    path('create_post/', PostCreationView.as_view(), name='create_post'),
-    path('posts/', ListPostsView.as_view(), name='list_posts'),
-    path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),
+    path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
+    path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
+    path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
+    path('post/<uuid:post_id>/report/', ReportPostView.as_view(), name='report_post'),
     path('post/delete/<uuid:pk>/', PostDeleteView.as_view(), name='post_delete'),
 
     # Comment management
@@ -60,6 +65,14 @@ urlpatterns = [
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
     path('profile/<str:username>/update/', ProfileUpdateView.as_view(), name='profile_update'),
+
+    # Followers
+    path('follow/<str:username>/', Follow.as_view(), name='follow'),
+    path('unfollow/<str:username>/', Unfollow.as_view(), name='unfollow'),
+
+    # Like Post URL using the class-based view
+    path('post/<uuid:post_id>/like/', LikePostView.as_view(), name='like_post'),
+    path('ajax/like/', LikePostView.as_view(), name='ajax_like_post'),  # AJAX version
 
     # Default authentication URLs (includes password reset, etc.)
     path('accounts/', include('django.contrib.auth.urls')),
