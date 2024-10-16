@@ -150,7 +150,6 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 
 
 # View for deleting a post
-@login_required
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'profile/profile.html'
