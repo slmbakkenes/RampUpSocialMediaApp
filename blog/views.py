@@ -194,44 +194,29 @@ class LikePostView(LoginRequiredMixin, TemplateView):
 
 class ReportPostView(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            post_id = request.POST.get('post_id')  # Get the post ID from the AJAX request
-            post = get_object_or_404(Post, id=post_id)
+        post_id = kwargs['post_id']
+        post = get_object_or_404(Post, id=post_id)
 
-            # Prepare a variable to hold the message data
-            response_data = {}
+        # Check if the user has already reported this post
+        if request.user in post.reported_by.all():
+            messages.error(request, 'You have already reported this post.')
+            return redirect(request.META.get('HTTP_REFERER', 'foryoupage'))  # Redirect back to previous page
 
-            # Check if the user has already reported this post
-            if request.user in post.reported_by.all():
-                # Add an error message since the user has already reported the post
-                message = 'You have already reported this post.'
-                response_data['message'] = message
-                response_data['message_type'] = 'error'
-                return JsonResponse(response_data, status=400)
+        # Add the user to the reported_by field and increase the report count
+        post.reported_by.add(request.user)
+        post.total_reports += 1
 
-            # Add the user to the reported_by field and increase the report count
-            post.reported_by.add(request.user)
-            post.total_reports += 1
+        # If the total reports reach 5, soft-delete the post
+        if post.total_reports >= 5:
+            post.is_deleted = True
+            messages.info(request, 'This post has been removed due to multiple reports.')
+        else:
+            messages.success(request, 'Thank you for reporting this post.')
 
-            # If the total reports reach 5, soft-delete the post
-            if post.total_reports >= 5:
-                post.is_deleted = True
-                message = 'This post has been removed due to multiple reports.'
-                response_data['is_deleted'] = True
-            else:
-                message = 'Thank you for reporting this post.'
+        post.save()
 
-            post.save()
-
-            # Return the success message
-            response_data['message'] = message
-            response_data['message_type'] = 'success' if not post.is_deleted else 'info'
-            response_data['total_reports'] = post.total_reports
-            response_data['is_deleted'] = post.is_deleted
-
-            return JsonResponse(response_data)
-
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+        # Redirect back to the previous page or a default page
+        return redirect(request.META.get('HTTP_REFERER', 'foryoupage'))
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User

@@ -1,70 +1,13 @@
-<button class="min-w-fit justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
-        onclick="reportPost('{{ post.id }}')">
-    Report
-</button>
+<form id="report-form-{{ post.id }}" action="{% url 'report_post' post_id=post.id %}" method="POST" style="display: inline;">
+    {% csrf_token %}
+    <button type="button" class="min-w-fit justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
+            onclick="confirmReport('{{ post.id }}')">
+        Report
+    </button>
+</form>
 
 <script>
-function reportPost(postId) {
-    const confirmReport = confirm("Are you sure you want to report this post?");
-
-    if (confirmReport) {
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'report_post' post_id=post.id %}",
-            data: {
-                'post_id': postId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                // Display the message using the custom template
-                displayMessage(response.message, 'success');
-
-                if (response.is_deleted) {
-                    // Hide the post if it's soft-deleted
-                    $('#post-' + postId).hide();
-                }
-            },
-            error: function(response) {
-                if (response.responseJSON && response.responseJSON.message) {
-                    displayMessage(response.responseJSON.message, 'error');  // Show the error message
-                } else {
-                    console.log('Error reporting post:', response);
-                }
-            }
-        });
-    }
-}
-
-// Function to display the message based on the type (error, success, info)
-function displayMessage(message, type) {
-    let messageTemplate = '';
-
-    if (type === 'success') {
-        messageTemplate = `
-            {% include 'Messages/Message types/succes.html' %}
-        `;
-    } else if (type === 'error') {
-        messageTemplate = `
-            {% include 'Messages/Message types/error.html' %}
-        `;
-    } else if (type === 'info') {
-        messageTemplate = `
-            {% include 'Messages/Message types/info.html' %}
-        `;
-    }
-
-    // Inject the rendered message template into the DOM
-    $('body').append(`
-        <div class="fixed bottom-4 inset-x-0 z-50 w-full">
-            ${messageTemplate}
-        </div>
-    `);
-
-    // Auto-hide the message after 5 seconds
-    setTimeout(function() {
-        $('.fixed.bottom-4').fadeOut(500, function() {
-            $(this).remove();
-        });
-    }, 5000);
+function confirmReport(postId) {
+        document.getElementById('report-form-' + postId).submit();
 }
 </script>
