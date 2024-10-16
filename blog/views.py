@@ -192,6 +192,32 @@ class LikePostView(LoginRequiredMixin, TemplateView):
         # If it's not a valid AJAX request, return an error
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
+class ReportPostView(LoginRequiredMixin, TemplateView):
+    def post(self, request, *args, **kwargs):
+        post_id = kwargs['post_id']
+        post = get_object_or_404(Post, id=post_id)
+
+        # Check if the user has already reported this post
+        if request.user in post.reported_by.all():
+            messages.error(request, 'You have already reported this post.')
+            return redirect(request.META.get('HTTP_REFERER', 'foryoupage'))  # Redirect back to previous page
+
+        # Add the user to the reported_by field and increase the report count
+        post.reported_by.add(request.user)
+        post.total_reports += 1
+
+        # If the total reports reach 5, soft-delete the post
+        if post.total_reports >= 5:
+            post.is_deleted = True
+            messages.info(request, 'This post has been removed due to multiple reports.')
+        else:
+            messages.success(request, 'Thank you for reporting this post.')
+
+        post.save()
+
+        # Redirect back to the previous page or a default page
+        return redirect(request.META.get('HTTP_REFERER', 'foryoupage'))
+
 class ProfileDetailView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'profile/profile.html'

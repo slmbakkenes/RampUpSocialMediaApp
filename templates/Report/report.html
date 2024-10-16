@@ -1,0 +1,13 @@
+<form id="report-form-{{ post.id }}" action="{% url 'report_post' post_id=post.id %}" method="POST" style="display: inline;">
+    {% csrf_token %}
+    <button type="button" class="min-w-fit justify-end px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white"
+            onclick="confirmReport('{{ post.id }}')">
+        Report
+    </button>
+</form>
+
+<script>
+function confirmReport(postId) {
+        document.getElementById('report-form-' + postId).submit();
+}
+</script>
