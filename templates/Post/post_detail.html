@@ -6,7 +6,7 @@
     <!-- User Info Section -->
     <div class="basis-1/4 lg:basis-1/6 flex flex-row justify-between items-center mb-1">
         <div class="flex flex-col h-full">
-            <div class="relative cursor-pointer grow flex flex-row items-center">
+            <div onclick="location.href='{% url 'profile' post.user.username %}'" class="relative cursor-pointer grow flex flex-row items-center">
                 <img class="w-1/12 h-auto aspect-square rounded-full object-cover"
                      src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
                      alt="User Image">
@@ -32,7 +32,7 @@
     <div class="flex md:flex-row flex-col basis-3/4 lg:basis-5/6 w-auto flex-grow h-full" id="post info">
         <!-- Post Image and Title -->
         <div class="basis-2/2 h-full flex flex-col md:mr-4">
-            <img class="cursor-pointer min-h-0 grow max-h-full object-cover rounded-lg"
+            <img onclick="location.href='{% url 'post_detail' post.id %}'" class="cursor-pointer min-h-0 grow max-h-full object-cover rounded-lg"
                     {% if post.image %}
                  src="{{ post.image.url }}"
                     {% else %}
@@ -40,7 +40,7 @@
                     {% endif %}
                  alt="Post Image">
                 {% include 'Like/Like.html' %}
-            <h2 class="cursor-pointer min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
+            <h2 onclick="location.href='{% url 'post_detail' post.id %}'" class="cursor-pointer min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
         </div>
 
     </div>
@@ -65,6 +65,14 @@
                            <div class="text-sm font-normal text-gray-500 dark:text-gray-300">
                                {{ comment.comment }}
                            </div>
+                           {% if comment.user == request.user or comment.post.user == request.user %} <!-- Check if the logged-in user is the comment owner -->
+                                <form action="{% url 'comment_delete' comment.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700">
+                                        Delete
+                                    </button>
+                                </form>
+                            {% endif %}
                        </div>
                    </li>
                {% endif %}

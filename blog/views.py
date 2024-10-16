@@ -157,26 +157,55 @@ class PostDetailView(DetailView):
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
-    template_name = 'update_post.html'
+    template_name = 'post/update_post.html'
 
-    def get_success_url(self):
-        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+    def form_valid(self, form):
+        # Save the post object
+        post = form.save()
+
+        # Get the list of selected category IDs from the form
+        selected_categories_ids = self.request.POST.getlist('categories')
+
+        # Clear old categories linked to the post
+        CategoryPost.objects.filter(post=post).delete()
+
+        # Add new categories selected in the form
+        for category_id in selected_categories_ids:
+            category = get_object_or_404(Category, id=category_id)
+            CategoryPost.objects.create(post=post, category=category)
+
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get all categories
+        context['categories'] = Category.objects.all()
+
+        # Fetch the post instance
+        post = self.get_object()
+
+        # Get the selected categories linked to this post from the blog_categorypost table
+        context['selected_categories'] = CategoryPost.objects.filter(post=post).values_list('category_id', flat=True)
+
+        return context
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
 # View for deleting a post
-@login_required
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
-    template_name = 'confirm_delete.html'
-
-    def get_success_url(self):
-        success_message(self)
-        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+    template_name = 'profile/profile.html'
 
     def dispatch(self, request, *args, **kwargs):
         post = self.get_object()
         if post.user != request.user:
-            return HttpResponseForbidden()  # Prevent unauthorized deletions
+            return HttpResponseForbidden("You are not allowed to delete this post.")
         return super().dispatch(request, *args, **kwargs)
+      
+    # Na het verwijderen van de post wordt de gebruiker teruggestuurd naar hun profielpagina
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
 
 class LikePostView(LoginRequiredMixin, TemplateView):
@@ -294,6 +323,21 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         profile.save()
         success_message(self)
         return redirect('profile', username=self.kwargs['username'])
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+    template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
+
+    def get_success_url(self):
+        # Redirect naar de detailpagina van de post na succesvolle verwijdering
+        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+
+    def dispatch(self, request, *args, **kwargs):
+        comment = self.get_object()
+        if comment.user != request.user:
+            return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
+        return super().dispatch(request, *args, **kwargs)
+
 
 # Method to take an invalid form and pass an error message
 def error_message(self, form):
