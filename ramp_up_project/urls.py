@@ -4,6 +4,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from blog.views import (
+    PostDetailView,
     SignUpView,
     ForYouPageView,
     PostCreationView,
@@ -35,6 +36,7 @@ urlpatterns = [
     # Post management
     path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
     path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
+    path('post/<uuid:id>/', PostDetailView.as_view(), name='post_detail'),
     path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
     path('post/<uuid:post_id>/report/', ReportPostView.as_view(), name='report_post'),
     path('post/delete/<uuid:pk>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
