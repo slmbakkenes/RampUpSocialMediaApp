@@ -43,10 +43,10 @@
             <h2 class="cursor-pointer min-h-fit py-2 text-xl font-bold text-gray-900 dark:text-white content-center overflow-y-auto text-ellipsis">{{ post.caption }}</h2>
         </div>
 
-
+    </div>
     <!-- Comments Section -->
-    <div class="basis-2/2 h-full flex flex-col md:ml-4 overflow-y-auto object-scale-down md:max-h-full max-h-48"
-    id="comments">
+    <div class="h-full flex flex-col md:ml-4 overflow-y-auto object-scale-down md:max-h-full max-h-48"id="comments">
+    <div class="h-full text-gray-700 dark:text-gray-400 relative">
        <ol class="h-full relative">
            {% for comment in comments %}
                {% if post.id == comment.post.id %}  <!-- Fixed to use `post.id` -->
@@ -69,8 +69,7 @@
                {% endif %}
            {% endfor %}
        </ol>
-   </div>
-</div>
+    </div>
     </div>
 </a>
 {% endblock %}
