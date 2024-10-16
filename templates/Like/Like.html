@@ -1,7 +1,7 @@
-<div class="flex items-center justify-between mt-2">
+<div z-50 class="flex items-center justify-between mt-2">
     <form class="like-form flex items-center" data-post-id="{{ post.id }}" method="POST">
         {% csrf_token %}
-        <button type="submit" class="like-button px-3 py-2 bg-transparent text-white flex items-center">
+        <button z-50 type="submit" class="like-button px-3 py-2 bg-transparent text-white flex items-center">
             {% if post.id in liked_posts %}
                 <i class="fas fa-thumbs-up text-white text-2xl"></i>
             {% else %}
