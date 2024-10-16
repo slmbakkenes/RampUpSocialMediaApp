@@ -25,16 +25,16 @@ from blog.views import (
     PostCreationView,
     ListPostsView,
     PostUpdateView,
+    PostDeleteView,
     ProfileDetailView,
     ProfileUpdateView,
     Unfollow,
     Follow,
     LikePostView,
     ReportPostView,
-    PostDeleteView,
     CommentDeleteView,
     CommentCreationView,
-    EditCommentView,
+    EditCommentView
 )
 
 urlpatterns = [
@@ -55,7 +55,7 @@ urlpatterns = [
     path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
     path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
     path('post/<uuid:post_id>/report/', ReportPostView.as_view(), name='report_post'),
-    path('post/delete/<uuid:pk>/', PostDeleteView.as_view(), name='post_delete'),
+    path('post/delete/<uuid:pk>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
 
     # Comment management
     path('comment/delete/<uuid:pk>/', CommentDeleteView.as_view(), name='comment_delete'),

@@ -124,6 +124,7 @@ class PostCreationView(LoginRequiredMixin, CreateView):
         return context
 
     def get_success_url(self):
+        success_message(self)
         # Redirect to the user's profile using the username
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
@@ -137,25 +138,32 @@ class ListPostsView(LoginRequiredMixin, ListView):
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
     form_class = PostForm
-    template_name = 'update_post.html'
+    template_name = 'post/update_post.html'
 
-    def get_success_url(self):
-        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
+
 
 # View for deleting a post
+@login_required
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
-    template_name = 'confirm_delete.html'
-
-    def get_success_url(self):
-        success_message(self)
-        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+    template_name = 'profile/profile.html'
 
     def dispatch(self, request, *args, **kwargs):
         post = self.get_object()
         if post.user != request.user:
-            return HttpResponseForbidden()  # Prevent unauthorized deletions
+            return HttpResponseForbidden("You are not allowed to delete this post.")
         return super().dispatch(request, *args, **kwargs)
+
+    # Na het verwijderen van de post wordt de gebruiker teruggestuurd naar hun profielpagina
+    def get_success_url(self):
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
 
 class LikePostView(LoginRequiredMixin, TemplateView):
@@ -276,7 +284,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
-    template_name = 'post/post_detail.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
+    template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
 
     def get_success_url(self):
         # Redirect naar de detailpagina van de post na succesvolle verwijdering
@@ -287,7 +295,6 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         if comment.user != request.user:
             return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
         return super().dispatch(request, *args, **kwargs)
-
 
 class CommentCreationView(LoginRequiredMixin, CreateView):
     model = Comment
