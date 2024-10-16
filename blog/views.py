@@ -282,6 +282,16 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         success_message(self)
         return redirect('profile', username=self.kwargs['username'])
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Haal alle categorieën op, en ook de categorieën die bij het profiel horen
+        categories = Category.objects.all()
+        selected_categories = self.object.categories.values_list('id', flat=True)  # Categorieën van profiel
+        context['categories'] = categories
+        context['selected_categories'] = selected_categories  # Voeg geselecteerde categorieën toe aan context
+        return context
+
+
 class CommentDeleteView(LoginRequiredMixin, DeleteView):
     model = Comment
     template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
