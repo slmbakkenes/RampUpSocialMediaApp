@@ -47,11 +47,16 @@ urlpatterns = [
     # Post management
     path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
     path('posts/', ListPostsView.as_view(), name='list_posts'),  # List all posts
+<<<<<<< Updated upstream
     path('update_post/<uuid:uuid>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
     path('post/delete/<uuid:uuid>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
 
     # Comment management
     path('comment/delete/<uuid:uuid>/', CommentDeleteView.as_view(), name='comment_delete'),
+=======
+    path('update_post/<uuid:pk>/', PostUpdateView.as_view(), name='update_post'),  # Update a post
+    path('post/delete/<uuid:uuid>/', PostDeleteView.as_view(), name='post_delete'),
+>>>>>>> Stashed changes
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),

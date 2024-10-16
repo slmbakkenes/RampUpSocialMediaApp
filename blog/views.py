@@ -93,13 +93,18 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     template_name = 'profile/profile.html'
 
+    # Stel het veld en de URL parameter in voor het ophalen van de UUID
+    slug_field = 'id'  # Het veld in je model dat de UUID bevat
+    slug_url_kwarg = 'uuid'  # De naam van de parameter in je URL
+
     def get_success_url(self):
-        return reverse_lazy('profile', kwargs={'user_id': self.request.user.id})
+        # Na het verwijderen van de post wordt de gebruiker teruggestuurd naar hun profielpagina
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
     def dispatch(self, request, *args, **kwargs):
         post = self.get_object()
         if post.user != request.user:
-            return HttpResponseForbidden()  # Prevent unauthorized deletions
+            return HttpResponseForbidden("You are not allowed to delete this post.")
         return super().dispatch(request, *args, **kwargs)
 
 
