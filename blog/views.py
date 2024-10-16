@@ -136,10 +136,11 @@ class ListPostsView(LoginRequiredMixin, ListView):
 # View for updating a post
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
+    form_class = PostForm
     template_name = 'post/update_post.html'
 
     def get_success_url(self, **kwargs):
-        return redirect('profile', username=self.kwargs['user_id': self.request.user.id])
+        return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 
 
 # View for deleting a post
