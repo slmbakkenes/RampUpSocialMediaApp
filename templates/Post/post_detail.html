@@ -2,11 +2,11 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<a onclick="location.href='{% url 'post_detail' post.id %}'" class="border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+<a class="relative border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
     <!-- User Info Section -->
     <div class="basis-1/4 lg:basis-1/6 flex flex-row justify-between items-center mb-1">
         <div class="flex flex-col h-full">
-            <div z-50 onclick="location.href='{% url 'profile' post.user.username %}'" class="cursor-pointer grow flex flex-row items-center">
+            <div class="relative cursor-pointer grow flex flex-row items-center">
                 <img class="w-1/12 h-auto aspect-square rounded-full object-cover"
                      src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
                      alt="User Image">
