@@ -10,6 +10,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
 
     <title>{% block title %}Social Media App{% endblock %}</title>
 
@@ -19,7 +21,9 @@
 
 </head>
 
-<body style="background-color: #60A9B4;">
+<body class="!overflow-visible" style="background-color: #60A9B4;">
+{% include 'Messages/messages.html' %}
+
 <!-- Navbar -->
 <nav class="fixed top-0 z-50 w-full border-b border-gray-200 dark:border-gray-700" style="background-color: #93CDDE;">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
@@ -80,7 +84,7 @@
                                             onclick="document.getElementById('logout-form').submit();">
                                         Sign out
                                     </button>
-                                </li>
+                                </li>   
                             </ul>
                         </div>
                     {% endif %}
@@ -103,6 +107,12 @@
                 </a>
             </li>
             {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'foryoupage_redirect' %}"
+                   class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <span class="flex-1 ms-3 whitespace-nowrap">For You</span>
+                </a>
+            </li>
                 <li>
                     <a href="{% url 'profile' user.username %}"
                        class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
