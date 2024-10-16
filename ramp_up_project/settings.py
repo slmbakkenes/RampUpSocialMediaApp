@@ -145,13 +145,3 @@ LOGIN_REDIRECT_URL = 'foryoupage'  # or wherever you want to redirect users post
 
 # Redirect after logout
 LOGOUT_REDIRECT_URL = 'login'
-
-# Mail, does not work idk why some ssl issues
-# good luck if you want to fix it!
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.strato.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'rampup@websitegalaxy.nl'
-EMAIL_HOST_PASSWORD = 'rraramramprampurampup'
-DEFAULT_FROM_EMAIL = 'rampup@websitegalaxy.nl'
