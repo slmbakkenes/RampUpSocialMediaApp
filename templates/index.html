@@ -56,14 +56,15 @@
             </div>
         </div>
     </form>
+ 
 
     {% for post in page_obj %}
         {% if not post.is_deleted and post.total_reports < 5 %}  <!-- Check if the post is not deleted -->
-        <a onclick="postClick()" class="relative cursor-pointer border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+        <a onclick="window.location.href = '{% url 'post_detail' post.id %}';" class="relative cursor-pointer border-4 border-gray-400 z-10 bg-gray-50 p-4 my-4 flex flex-col md:aspect-video rounded-lg shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
             <!-- User Info Section -->
             <div class="basis-1/4 lg:basis-1/6 flex flex-row justify-between items-center mb-1">
                 <div class="flex flex-col h-full">
-                    <div onclick="profileClick()" class="cursor-pointer grow flex flex-row items-center">
+                    <div onclick="event.stopPropagation(); window.location.href = '{% url 'profile' post.user.username %}';" class="cursor-pointer grow flex flex-row items-center">
                         <img class="w-1/12 h-auto aspect-square rounded-full object-cover"
                              src="{{ post.user.profile.profile_img.url|default:'/media/blank-profile-picture.png' }}"
                              alt="User Image">
@@ -130,20 +131,7 @@
 
         </a>
 
-        <script>
-    function postClick() {
-        window.location.href = '{% url 'post_detail' post.id %}';
-    }
-
-    function profileClick() {
-        event.stopPropagation();
-        window.location.href = '{% url 'profile' post.user.username %}';
-    }
-
-    function stop() {
-        event.stopPropagation();
-    }
-        </script>
+        
         {% endif %}
     {% endfor %}
 
