@@ -133,3 +133,19 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         profile = form.save(commit=False)
         profile.save()
         return redirect('profile', username=self.kwargs['username'])
+
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+    template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
+
+    def get_success_url(self):
+        # Redirect naar de detailpagina van de post na succesvolle verwijdering
+        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+
+    def dispatch(self, request, *args, **kwargs):
+        comment = self.get_object()
+        if comment.user != request.user:
+            return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
+        return super().dispatch(request, *args, **kwargs)
+
+
