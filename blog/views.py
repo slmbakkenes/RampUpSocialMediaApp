@@ -139,6 +139,11 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     template_name = 'post/update_post.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
     def get_success_url(self, **kwargs):
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
 

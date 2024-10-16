@@ -43,16 +43,16 @@
                             <p class="mt-2 text-gray-800">{{ post.caption }}</p>
                             <p class="text-gray-600">Likes: {{ post.no_of_likes }}</p>
                             <div class="mt-4">  
+                                <form action="{% url 'update_post' post.id %}" method="get">  
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">  
+                                        Edit Post  
+                                    </button>  
+                                </form>
                                 <form action="{% url 'post_delete' post.id %}" method="post">
                                     {% csrf_token %}  
                                     <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">  
                                         Delete Post  
                                     </button>
-                                </form>  
-                                <form action="{% url 'update_post' post.id %}" method="get">  
-                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">  
-                                        Edit Post  
-                                    </button>  
                                 </form>
                             </div>  
                         </li>  
