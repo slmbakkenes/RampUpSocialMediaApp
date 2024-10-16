@@ -7,7 +7,8 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'bio', 'profile_img')
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'caption', 'created_at', 'no_of_likes')
+    list_display = ('id', 'user', 'caption', 'created_at', 'no_of_likes', 'total_reports', 'is_deleted')
+    list_filter = ['is_deleted']
     search_fields = ('caption',)
 
 class LikePostAdmin(admin.ModelAdmin):

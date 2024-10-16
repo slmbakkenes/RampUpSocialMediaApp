@@ -22,7 +22,6 @@
         // Unbind any existing event listeners to prevent multiple AJAX calls
         $('.like-form').off('submit').on('submit', function (e) {
             e.preventDefault();  // Prevent default form submission
-
             const form = $(this);  // Get the current form
             const post_id = form.data('post-id');  // Get the post ID from the data attribute
             const csrf_token = form.find('input[name="csrfmiddlewaretoken"]').val();  // Get CSRF token
@@ -32,7 +31,6 @@
 
             // Disable the button to prevent double clicks
             likeButton.prop('disabled', true);
-
             // Start AJAX request
             $.ajax({
                 type: 'POST',
@@ -57,7 +55,7 @@
                 error: function (response) {
                     console.error('Error:', response);  // Log any errors
                 },
-                complete: function() {
+                complete: function () {
                     // Re-enable the button after the request is complete
                     likeButton.prop('disabled', false);
                 }
