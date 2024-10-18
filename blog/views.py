@@ -1,6 +1,8 @@
 from django.contrib import messages
 
 from blog.forms import ProfileForm
+from forms.comment_form import CommentForm
+from blog.models import Post, Comment, User, Profile, Category, CategoryPost, LikePost
 from blog.models import LikePost, Post, Comment, Follow, User, Profile, Category, CategoryPost
 from blog.models import Follow as FollowModel
 from forms.post_form import PostForm
@@ -202,7 +204,7 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         if post.user != request.user:
             return HttpResponseForbidden("You are not allowed to delete this post.")
         return super().dispatch(request, *args, **kwargs)
-      
+
     # Na het verwijderen van de post wordt de gebruiker teruggestuurd naar hun profielpagina
     def get_success_url(self):
         return reverse_lazy('profile', kwargs={'username': self.request.user.username})
@@ -324,19 +326,61 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         success_message(self)
         return redirect('profile', username=self.kwargs['username'])
 
-class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Haal alle categorieën op, en ook de categorieën die bij het profiel horen
+        categories = Category.objects.all()
+        selected_categories = self.object.categories.values_list('id', flat=True)  # Categorieën van profiel
+        context['categories'] = categories
+        context['selected_categories'] = selected_categories  # Voeg geselecteerde categorieën toe aan context
+        return context
+
+
+class CommentDeleteView(LoginRequiredMixin, RedirectView):
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        comment = get_object_or_404(Comment, id=kwargs.get("pk"))
+        comment.delete()
+        if comment.user != self.request.user:
+            return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
+        return reverse_lazy('post_detail', kwargs={'id': comment.post.id})
+
+class CommentCreationView(LoginRequiredMixin, CreateView):
     model = Comment
-    template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
+    form_class = CommentForm
+    template_name = 'post/post_detail.html'  # Maak deze template aan voor het toevoegen van opmerkingen
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post
+        form.instance.user = self.request.user  # Koppel de gebruiker aan de opmerking
+        form.instance.post = post  # Koppel de opmerking aan de post
+        response = super().form_valid(form)  # Verwerk het formulier en sla de opmerking op
+        return response  # Geef de response terug na succesvolle validatie
 
     def get_success_url(self):
-        # Redirect naar de detailpagina van de post na succesvolle verwijdering
-        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+        # Redirect naar de detailpagina van de post na succesvol toevoegen van een commentaar
+        return reverse_lazy('post_detail', kwargs={'id': self.object.post.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = get_object_or_404(Post, id=self.kwargs['post_id'])  # Verkrijg de post om deze in de context te kunnen gebruiken
+        return context
+
+
+class EditCommentView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'post/post_detail.html'  # Hier stellen we de juiste template in voor bewerken
 
     def dispatch(self, request, *args, **kwargs):
         comment = self.get_object()
         if comment.user != request.user:
-            return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
+            return HttpResponseForbidden()  # Voorkom ongeautoriseerde bewerkingen
         return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'id': self.object.post.id})
 
 
 # Method to take an invalid form and pass an error message

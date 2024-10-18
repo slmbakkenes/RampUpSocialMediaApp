@@ -56,7 +56,7 @@
             </div>
         </div>
     </form>
- 
+
 
     {% for post in page_obj %}
         {% if not post.is_deleted and post.total_reports < 5 %}  <!-- Check if the post is not deleted -->
@@ -130,8 +130,6 @@
             </div>
 
         </a>
-
-        
         {% endif %}
     {% endfor %}
 

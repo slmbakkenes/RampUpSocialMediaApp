@@ -1,17 +1,17 @@
-{% extends '_base.html' %}  
-{% load widget_tweaks %}  
+{% extends '_base.html' %}
+{% load widget_tweaks %}
 
-{% block content %}  
-    <div class="flex items-center justify-center min-h-screen">  
-        <div class="max-w-lg w-full bg-[#3A7B8A] shadow-md rounded-lg p-6">  
-            <h1 class="text-2xl font-bold text-center text-white">{{ user.username }}'s Profile</h1>  
+{% block content %}
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="max-w-lg w-full bg-[#3A7B8A] shadow-md rounded-lg p-6"> <!-- Darker background color -->
+            <h1 class="text-2xl font-bold text-center text-white">{{ user.username }}'s Profile</h1> <!-- Changed text color to white -->
 
-            <div class="mt-4 mb-6 text-center">  
-                <img src="{{ profile.profile_img.url }}" alt="{{ user.username }}'s profile image"  
-                     class="rounded-full w-24 h-24 mx-auto">  
-                <p class="mt-2 text-white">{{ profile.bio }}</p>  
-            </div>  
-        
+            <div class="mt-4 mb-6 text-center">
+                <img src="{{ profile.profile_img.url }}" alt="{{ user.username }}'s profile image"
+                     class="rounded-full w-24 h-24 mx-auto">
+                <p class="mt-2 text-white">{{ profile.bio }}</p> <!-- Changed text color to white -->
+            </div>
+
             {% if user.username == self.username %}
             <div class="mb-6 text-center">
                 <a href="{% url 'profile_update' user.username %}" 
@@ -44,19 +44,19 @@
                             <p class="text-gray-600">Likes: {{ post.no_of_likes }}</p>
                             <div class="mt-4">  
                                 {% if post.user == self %}
-                                <form action="{% url 'update_post' post.id %}" method="get">  
+                                <form action="{% url 'update_post' post.id %}" method="get">
                                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">  
                                         Edit Post  
                                     </button>  
                                 </form>
                                 <form action="{% url 'post_delete' post.id %}" method="post">
-                                    {% csrf_token %}  
-                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">  
-                                        Delete Post  
+                                    {% csrf_token %}
+                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                        Delete Post
                                     </button>
                                 </form>
                                 {% endif %}
-                            </div>  
+                            </div>
                         </li>  
                     {% endfor %}  
                 </ul>  

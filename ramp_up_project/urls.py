@@ -1,3 +1,19 @@
+"""
+URL configuration for ramp_up_project project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/5.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
@@ -13,11 +29,13 @@ from blog.views import (
     PostDeleteView,
     ProfileDetailView,
     ProfileUpdateView,
-    CommentDeleteView,
     Unfollow,
     Follow,
     LikePostView,
-    ReportPostView
+    ReportPostView,
+    CommentDeleteView,
+    CommentCreationView,
+    EditCommentView
 )
 
 urlpatterns = [
@@ -30,8 +48,8 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
 
     # Main views
-    path('', ForYouPageView.as_view(), name='foryoupage'),  # For You page
-    path('foryoupage/', ForYouPageView.as_view(), name='foryoupage_redirect'),  # Redirect to For You page
+    path('', ForYouPageView.as_view(), name='foryoupage'),
+    path('foryoupage/', ForYouPageView.as_view(), name='foryoupage_redirect'),
 
     # Post management
     path('create_post/', PostCreationView.as_view(), name='create_post'),  # Create a post
@@ -42,12 +60,14 @@ urlpatterns = [
     path('post/delete/<uuid:pk>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
 
     # Comment management
-    path('comment/delete/<uuid:pk>/', CommentDeleteView.as_view(), name='comment_delete'),
+    path('comment/delete/<int:pk>/', CommentDeleteView.as_view(), name='comment_delete'),
+    path('post/<uuid:post_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),
+    path('comment/<int:pk>/edit/', EditCommentView.as_view(), name='comment_edit'),
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
     path('profile/<str:username>/update/', ProfileUpdateView.as_view(), name='profile_update'),
-    
+
     # Followers
     path('follow/<str:username>/', Follow.as_view(), name='follow'),
     path('unfollow/<str:username>/', Unfollow.as_view(), name='unfollow'),
@@ -59,3 +79,4 @@ urlpatterns = [
     # Default authentication URLs (includes password reset, etc.)
     path('accounts/', include('django.contrib.auth.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
