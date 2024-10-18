@@ -336,20 +336,15 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class CommentDeleteView(LoginRequiredMixin, DeleteView):
-    model = Comment
-    form_class = CommentForm
-    template_name = 'confirm_delete.html'  # Dit is de template waarin je de bevestiging voor verwijderen toont.
+class CommentDeleteView(LoginRequiredMixin, RedirectView):
+    permanent = False
 
-    def dispatch(self, request, *args, **kwargs):
-        comment = self.get_object()
-        if comment.user != request.user:
+    def get_redirect_url(self, *args, **kwargs):
+        comment = get_object_or_404(Comment, id=kwargs.get("pk"))
+        comment.delete()
+        if comment.user != self.request.user:
             return HttpResponseForbidden()  # Voorkom ongeautoriseerde verwijderingen
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        # Redirect naar de detailpagina van de post na succesvolle verwijdering
-        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+        return reverse_lazy('post_detail', kwargs={'id': comment.post.id})
 
 class CommentCreationView(LoginRequiredMixin, CreateView):
     model = Comment
@@ -365,7 +360,7 @@ class CommentCreationView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         # Redirect naar de detailpagina van de post na succesvol toevoegen van een commentaar
-        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+        return reverse_lazy('post_detail', kwargs={'id': self.object.post.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -385,7 +380,7 @@ class EditCommentView(LoginRequiredMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse_lazy('post_detail', kwargs={'post_id': self.object.post.id})
+        return reverse_lazy('post_detail', kwargs={'id': self.object.post.id})
 
 
 # Method to take an invalid form and pass an error message

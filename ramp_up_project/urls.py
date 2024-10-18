@@ -60,9 +60,9 @@ urlpatterns = [
     path('post/delete/<uuid:pk>/', PostDeleteView.as_view(), name='post_delete'), # Delete a post
 
     # Comment management
-    path('comment/delete/<uuid:pk>/', CommentDeleteView.as_view(), name='comment_delete'),
-    path('post/<uuid:pk>/comment/add/', CommentCreationView.as_view(), name='add_comment'),
-    path('comment/<uuid:pk>/edit/', EditCommentView.as_view(), name='comment_edit'),
+    path('comment/delete/<int:pk>/', CommentDeleteView.as_view(), name='comment_delete'),
+    path('post/<uuid:post_id>/comment/add/', CommentCreationView.as_view(), name='add_comment'),
+    path('comment/<int:pk>/edit/', EditCommentView.as_view(), name='comment_edit'),
 
     # Profile view
     path('profile/<str:username>/', ProfileDetailView.as_view(), name='profile'),
