@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6d@msb!qlqt38n2*ipbb0v3sh8y1%r(ac5o*xj-!+h=hjky1(_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['ramp-up-project.azurewebsites.net']
 
@@ -80,9 +80,14 @@ WSGI_APPLICATION = 'ramp_up_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "django",
+        "USER": "django",
+        "PASSWORD": "Admin@123",
+        "HOST": "social-media-ramp-up-db.postgres.database.azure.com",
+        "PORT": "5432",
+        "OPTIONS": {'sslmode': 'require',}
     }
 }
 

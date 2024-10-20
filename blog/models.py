@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 import uuid
-from datetime import datetime
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -18,7 +18,7 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images', blank=True)
     caption = models.TextField()
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
     no_of_likes = models.IntegerField(default=0)
     total_reports = models.IntegerField(default=0)
     is_deleted = models.BooleanField(default=False)
@@ -45,7 +45,7 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)  # Changed from post_id to post
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
-    comment_date = models.DateTimeField(auto_now_add=True)  # Automatically set date
+    comment_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return str(self.id)
