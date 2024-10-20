@@ -90,14 +90,6 @@ jobs:
           app-name: 'ramp-up-project'
           slot-name: 'Production'
 
-      # Activate the virtual environment
-      - name: Activate virtual environment
-        run: source venv/bin/activate
-
-      # Run Django migrations on Azure
-      - name: Run migrations
-        run: python manage.py migrate
-
       # Collect static files
       - name: Collect static files
         run: python manage.py collectstatic --noinput
