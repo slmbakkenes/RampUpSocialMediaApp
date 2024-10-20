@@ -22,16 +22,33 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Install Node.js to build Tailwind CSS
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Use the correct Node.js version for your project
+
+      # Install Node.js dependencies for Tailwind CSS
+      - name: Install Node.js dependencies
+        run: npm install
+
+      # Build Tailwind CSS
+      - name: Build Tailwind CSS
+        run: npm run build  # Ensure you have a "build" script in package.json for Tailwind
+
+      # Set up and activate the Python virtual environment
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
-      
+
+      # Install Python dependencies
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
+      # Zip the artifact for deployment
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
 
@@ -39,9 +56,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -61,7 +76,7 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
+      # Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -69,10 +84,18 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9C8605828EF64A46A8DB947FFE0A820A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A470AF6F57D84F3788891A13501F49C3 }}
 
+      # Deploy to Azure Web App
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'ramp-up-project'
           slot-name: 'Production'
-          
+
+      # Run Django migrations on Azure
+      - name: Run migrations
+        run: python manage.py migrate
+
+      # Collect static files
+      - name: Collect static files
+        run: python manage.py collectstatic --noinput
