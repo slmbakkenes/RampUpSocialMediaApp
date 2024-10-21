@@ -100,7 +100,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Compressor settings for CSS/JS
 COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
 COMPRESS_ROOT = BASE_DIR / 'static'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
